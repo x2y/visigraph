@@ -25,7 +25,7 @@
       })
       .state('graphs.create', {
         url: '/create',
-        templateUrl: 'modules/graphs/client/views/form-graph.client.view.html',
+        templateUrl: 'modules/graphs/client/views/create-graph.client.view.html',
         controller: 'GraphsController',
         controllerAs: 'vm',
         resolve: {
@@ -38,7 +38,7 @@
       })
       .state('graphs.edit', {
         url: '/:graphId/edit',
-        templateUrl: 'modules/graphs/client/views/form-graph.client.view.html',
+        templateUrl: 'modules/graphs/client/views/edit-graph.client.view.html',
         controller: 'GraphsController',
         controllerAs: 'vm',
         resolve: {

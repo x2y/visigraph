@@ -16,15 +16,15 @@
     vm.form = {};
     vm.remove = remove;
     vm.save = save;
+    vm.enforceRuleValidity = enforceRuleValidity;
 
-    // Remove existing Graph
+
     function remove() {
       if (confirm('Are you sure you want to delete?')) {
         vm.graph.$remove($state.go('graphs.list'));
       }
     }
 
-    // Save Graph
     function save(isValid) {
       if (!isValid) {
         $scope.$broadcast('show-errors-check-validity', 'vm.form.graphForm');
@@ -38,14 +38,24 @@
         vm.graph.$save(successCallback, errorCallback);
       }
 
+
       function successCallback(res) {
-        $state.go('graphs.view', {
+        $state.go('graphs.edit', {
           graphId: res._id
         });
       }
 
       function errorCallback(res) {
         vm.error = res.data.message;
+      }
+    }
+
+    function enforceRuleValidity() {
+      if (!vm.graph.allowCycles) {
+        vm.graph.allowLoops = false;
+        if (!vm.graph.allowDirectedEdges) {
+          vm.graph.allowMultiEdges = false;
+        }
       }
     }
   }

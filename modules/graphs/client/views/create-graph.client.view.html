@@ -1,0 +1,41 @@
+<section>
+  <div class="page-header">
+    <h1>New Graph</h1>
+  </div>
+  <div class="col-md-12">
+    <form name="vm.form.graphForm" class="form-horizontal" ng-submit="vm.save(vm.form.graphForm.$valid)" novalidate>
+      <fieldset>
+        <div class="form-group" show-errors>
+          <label class="control-label" for="name">Name</label>
+          <input name="name" type="text" ng-model="vm.graph.name" id="name" class="form-control" placeholder="Name" required>
+          <div ng-messages="vm.form.graphForm.name.$error" role="alert">
+            <p class="help-block error-text" ng-message="required">Graph name is required.</p>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="control-label">Options</label>
+          <br>
+          <label class="checkbox-inline">
+            <input type="checkbox" id="allow-loops" ng-model="vm.graph.allowLoops" ng-disabled="!vm.graph.allowCycles" ng-change="vm.enforceRuleValidity()" value="allowLoops"> Allow loops
+          </label>
+          <label class="checkbox-inline">
+            <input type="checkbox" id="allow-directed-edges" ng-model="vm.graph.allowDirectedEdges" ng-change="vm.enforceRuleValidity()" value="allowDirectedEdges"> Allow directed edges
+          </label>
+          <br>
+          <label class="checkbox-inline">
+            <input type="checkbox" id="allow-multi-edges" ng-model="vm.graph.allowMultiEdges" ng-disabled="!vm.graph.allowCycles && !vm.graph.allowDirectedEdges" ng-change="vm.enforceRuleValidity()" value="allowMultiEdges"> Allow multiple edges
+          </label>
+          <label class="checkbox-inline">
+            <input type="checkbox" id="allow-cycles" ng-model="vm.graph.allowCycles" ng-change="vm.enforceRuleValidity()" ng-disabled="vm.graph.allowLoops || (vm.graph.allowMultiEdges && !vm.graph.allowDirectedEdges)" value="allowCycles"> Allow cycles
+          </label>
+        </div>
+        <div class="form-group">
+          <button type="submit" class="btn btn-default">Create</button>
+        </div>
+        <div ng-show="vm.error" class="text-danger">
+          <strong ng-bind="vm.error"></strong>
+        </div>
+      </fieldset>
+    </form>
+  </div>
+</section>
