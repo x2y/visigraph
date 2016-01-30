@@ -12,6 +12,8 @@
         chainTransform(transformRequest, $http.defaults.transformRequest);
     var chainedTransformResponse =
         chainTransform($http.defaults.transformResponse, transformResponse);
+    var chainedTransformResponseArray =
+        chainTransform($http.defaults.transformResponse, transformResponseArray);
 
     var Resource = $resource('api/graphs/:graphId', {
       graphId: '@_id'
@@ -30,7 +32,7 @@
         method: 'GET',
         isArray: true,
         // No need to transform the request further, since only a query is needed.
-        transformResponse: chainedTransformResponse
+        transformResponse: chainedTransformResponseArray
       },
       update: {
         method: 'PUT',
@@ -75,6 +77,18 @@
       resourceData.allowMultiEdges = data.allowMultiEdges;
       resourceData.allowCycles = data.allowCycles;
       return resourceData;
+    }
+
+    function transformResponseArray(resourceData, header) {
+      var validResourceData = [];
+      for (var i = 0; i < resourceData.length; ++i) {
+        try {
+          validResourceData.push(transformResponse(resourceData[i], header));
+        } catch (e) {
+          console.error('Unable to parse graph data:', resourceData[i], e);
+        }
+      }
+      return validResourceData;
     }
   }
 })();
