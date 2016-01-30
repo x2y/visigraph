@@ -5,7 +5,7 @@
   <div class="list-group">
     <a ng-repeat="graph in vm.graphs" ui-sref="graphs.view({ graphId: graph._id })" class="list-group-item">
       <small class="list-group-item-text">
-        Posted on
+        Created on
         <span ng-bind="graph.created | date:'mediumDate'"></span>
         by
         <span ng-if="graph.user" ng-bind="graph.user.displayName"></span>
