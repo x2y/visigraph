@@ -5,19 +5,38 @@
     .module('graphs')
     .controller('GraphsController', GraphsController);
 
-  GraphsController.$inject = ['$scope', '$state', 'graphResolve', 'Authentication'];
+  GraphsController.$inject = ['$scope', '$state', 'graphResolve', 'GraphsService', 'Authentication'];
 
-  function GraphsController($scope, $state, graph, Authentication) {
+  function GraphsController($scope, $state, graph, GraphsService, Authentication) {
     var vm = this;
 
     vm.graph = graph;
     vm.authentication = Authentication;
     vm.error = null;
     vm.form = {};
+    vm.enforceRuleValidity = enforceRuleValidity;
     vm.remove = remove;
     vm.save = save;
-    vm.enforceRuleValidity = enforceRuleValidity;
 
+
+    window.foobar = function() {
+      $scope.$apply(function() {
+        for (var i = 0; i < 100; i += 10) {
+          vm.graph.vertices.push(new GraphsService.Vertex({
+            x: i, y: i
+          }));
+        }
+      });
+    }
+
+    function enforceRuleValidity() {
+      if (!vm.graph.allowCycles) {
+        vm.graph.allowLoops = false;
+        if (!vm.graph.allowDirectedEdges) {
+          vm.graph.allowMultiEdges = false;
+        }
+      }
+    }
 
     function remove() {
       if (confirm('Are you sure you want to delete?')) {
@@ -47,15 +66,6 @@
 
       function errorCallback(res) {
         vm.error = res.data.message;
-      }
-    }
-
-    function enforceRuleValidity() {
-      if (!vm.graph.allowCycles) {
-        vm.graph.allowLoops = false;
-        if (!vm.graph.allowDirectedEdges) {
-          vm.graph.allowMultiEdges = false;
-        }
       }
     }
   }
