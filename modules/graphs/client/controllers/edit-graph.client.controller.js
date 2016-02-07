@@ -12,10 +12,11 @@
 
     vm.graph = graph;
     vm.authentication = Authentication;
+    vm.onClick = onClick;
     vm.save = save;
 
 
-    vm.foobar = function(e) {
+    function onClick(e) {
       vm.graph.vertices.push(new GraphsService.Vertex({
         x: e.offsetX,
         y: e.offsetY,
