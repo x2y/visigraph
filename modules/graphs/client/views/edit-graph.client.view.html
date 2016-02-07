@@ -3,7 +3,7 @@
     <h1>{{vm.graph.name}}</h1>
   </div>
   <div class="col-md-12">
-    <svg width="500" height="500" ng-click="vm.onClick($event)">
+    <svg ng-click="vm.onClick($event)">
       <line ng-repeat="edge in vm.graph.edges" class="edge"
           ng-attr-stroke-width="{{edge.thickness}}"
           ng-attr-x1="{{edge.from.x}}" ng-attr-y1="{{edge.from.y}}"
@@ -12,7 +12,8 @@
       </line>
       <circle ng-repeat="vertex in vm.graph.vertices" class="vertex"
           ng-attr-r="{{vertex.radius}}" ng-attr-fill="{{vertex.color}}"
-          ng-attr-cx="{{vertex.x}}" ng-attr-cy="{{vertex.y}}">
+          ng-attr-cx="{{vertex.x}}" ng-attr-cy="{{vertex.y}}"
+          ng-click="vm.onVertexClick(vertex, $event)">
         <title>{{vertex.label}}</title>
       </circle>
     </svg>

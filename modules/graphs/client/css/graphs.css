@@ -1,5 +1,11 @@
 svg {
-  outline: 1px solid #ddd; }
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  height: 500px;
+  outline: 1px solid #ddd;
+  width: 100%; }
   svg .vertex {
     stroke-width: 1px;
     stroke: #000; }

@@ -15,6 +15,7 @@
 
     vm.authentication = Authentication;
     vm.onClick = onClick;
+    vm.onVertexClick = onVertexClick;
     vm.save = save;
 
     EditGraphController.Tool = Tool;
@@ -35,6 +36,15 @@
         case Tool.SCISSORS:
           break;
         case Tool.PAINTBRUSH:
+          break;
+      }
+    };
+
+    function onVertexClick(vertex, e) {
+      switch (vm.tool) {
+        case Tool.SCISSORS:
+          vm.graph.vertices.splice(vm.graph.vertices.indexOf(vertex), 1);
+          e.stopPropagation();
           break;
       }
     };

@@ -1,5 +1,15 @@
+@mixin user-select($user-select) {
+  -webkit-user-select: $user-select;
+     -moz-user-select: $user-select;
+      -ms-user-select: $user-select;
+          user-select: $user-select;
+}
+
 svg {
+  @include user-select(none);
+  height: 500px;
   outline: 1px solid #ddd;
+  width: 100%;
 
   .vertex {
     stroke-width: 1px;
