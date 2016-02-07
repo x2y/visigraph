@@ -19,15 +19,12 @@
     vm.save = save;
 
 
-    window.foobar = function() {
-      $scope.$apply(function() {
-        for (var i = 0; i < 100; i += 10) {
-          vm.graph.vertices.push(new GraphsService.Vertex({
-            x: i, y: i
-          }));
-        }
-      });
-    }
+    vm.foobar = function(e) {
+      vm.graph.vertices.push(new GraphsService.Vertex({
+        x: e.offsetX,
+        y: e.offsetY,
+      }));
+    };
 
     function enforceRuleValidity() {
       if (!vm.graph.allowCycles) {

@@ -71,8 +71,12 @@
         allowDirectedEdges: resourceData.allowDirectedEdges,
         allowMultiEdges: resourceData.allowMultiEdges,
         allowCycles: resourceData.allowCycles,
-        vertices: resourceData.vertices.map(v => v.toSerializable()),
-        edges: resourceData.edges.map(e => e.toSerializable()),
+        vertices: resourceData.vertices.map(function(v) {
+          return v.toSerializable();
+        }),
+        edges: resourceData.edges.map(function(e) {
+          return e.toSerializable();
+        }),
       });
       return resourceData;
     }
@@ -104,7 +108,7 @@
         var edge = new Edge(edgeData);
         resourceData.edges.push(edge);
         resourceData.incidences[edge.from].push(edge);
-        if (edge.from != edge.to) {
+        if (edge.from !== edge.to) {
           resourceData.incidences[edge.to].push(edge);
         }
       }
@@ -125,16 +129,17 @@
     }
   }
 
+
   function Vertex(opt_data) {
-    opt_data        = opt_data || {};
-    this.id         = opt_data.id         || generateRandomId();
-    this.x          = opt_data.x          || 0;
-    this.y          = opt_data.y          || 0;
-    this.label      = opt_data.label      || '';
-    this.radius     = opt_data.radius     || 5;
-    this.color      = opt_data.color      || '#ddd';
+    opt_data = opt_data || {};
+    this.id = opt_data.id || generateRandomId();
+    this.x = opt_data.x || 0;
+    this.y = opt_data.y || 0;
+    this.label = opt_data.label || '';
+    this.radius = opt_data.radius || 8;
+    this.color = opt_data.color || '#ddd';
     this.isSelected = opt_data.isSelected || false;
-    this.weight     = opt_data.weight     || 1;
+    this.weight = opt_data.weight || 1;
   }
 
   Vertex.prototype.toSerializable = function () {
@@ -152,20 +157,20 @@
 
 
   function Edge(opt_data) {
-    opt_data        = opt_data || {};
-    this.id         = opt_data.id         || generateRandomId();
+    opt_data = opt_data || {};
+    this.id = opt_data.id || generateRandomId();
     this.isDirected = opt_data.isDirected || false;
-    this.from       = opt_data.from       || null;
-    this.to         = opt_data.to         || null;
-    this.isLinear   = opt_data.isLinear   || true;
-    this.handleX    = opt_data.handleX    || 0;
-    this.handleY    = opt_data.handleY    || 0;
-    this.label      = opt_data.label      || '';
-    this.radius     = opt_data.radius     || 5;
-    this.color      = opt_data.color      || '#ddd';
+    this.from = opt_data.from || null;
+    this.to = opt_data.to || null;
+    this.isLinear = opt_data.isLinear || true;
+    this.handleX = opt_data.handleX || 0;
+    this.handleY = opt_data.handleY || 0;
+    this.label = opt_data.label || '';
+    this.radius = opt_data.radius || 10;
+    this.color = opt_data.color || '#ddd';
     this.isSelected = opt_data.isSelected || false;
-    this.weight     = opt_data.weight     || 1;
-    this.thickness  = opt_data.thickness  || 1;
+    this.weight = opt_data.weight || 1;
+    this.thickness = opt_data.thickness || 1;
   }
 
   Edge.prototype.toSerializable = function () {
@@ -185,6 +190,7 @@
       thickness:  this.thickness,
     };
   };
+
 
   function generateRandomId() {
     var id = '';
