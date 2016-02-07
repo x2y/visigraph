@@ -3,11 +3,11 @@
 
   angular
     .module('graphs')
-    .controller('GraphsListController', GraphsListController);
+    .controller('GraphListController', GraphListController);
 
-  GraphsListController.$inject = ['GraphsService'];
+  GraphListController.$inject = ['GraphsService'];
 
-  function GraphsListController(GraphsService) {
+  function GraphListController(GraphsService) {
     var vm = this;
 
     vm.graphs = GraphsService.query();

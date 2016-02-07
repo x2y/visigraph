@@ -17,7 +17,7 @@
       .state('graphs.list', {
         url: '',
         templateUrl: 'modules/graphs/client/views/list-graphs.client.view.html',
-        controller: 'GraphsListController',
+        controller: 'GraphListController',
         controllerAs: 'vm',
         data: {
           pageTitle: 'Graphs List'
@@ -26,7 +26,7 @@
       .state('graphs.create', {
         url: '/create',
         templateUrl: 'modules/graphs/client/views/create-graph.client.view.html',
-        controller: 'GraphsController',
+        controller: 'CreateGraphController',
         controllerAs: 'vm',
         resolve: {
           graphResolve: newGraph
@@ -39,7 +39,7 @@
       .state('graphs.edit', {
         url: '/:graphId/edit',
         templateUrl: 'modules/graphs/client/views/edit-graph.client.view.html',
-        controller: 'GraphsController',
+        controller: 'EditGraphController',
         controllerAs: 'vm',
         resolve: {
           graphResolve: getGraph
@@ -52,7 +52,7 @@
       .state('graphs.view', {
         url: '/:graphId',
         templateUrl: 'modules/graphs/client/views/view-graph.client.view.html',
-        controller: 'GraphsController',
+        controller: 'ViewGraphController',
         controllerAs: 'vm',
         resolve: {
           graphResolve: getGraph
