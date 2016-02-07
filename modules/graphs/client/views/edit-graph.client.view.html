@@ -16,6 +16,12 @@
         <title>{{vertex.label}}</title>
       </circle>
     </svg>
+    <br>
+    <label><input type="radio" value="cursor" ng-model="vm.tool"> Cursor</label>
+    <label><input type="radio" value="add_element" ng-model="vm.tool"> Add element</label>
+    <label><input type="radio" value="add_caption" ng-model="vm.tool"> Add caption</label>
+    <label><input type="radio" value="scissors" ng-model="vm.tool"> Scissors</label>
+    <label><input type="radio" value="paintbrush" ng-model="vm.tool"> Paintbrush</label>
     <div>{{vm.graph}}</div>
     <button ng-click="vm.save()">Save</button>
   </div>

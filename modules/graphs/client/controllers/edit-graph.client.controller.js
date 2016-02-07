@@ -11,16 +11,32 @@
     var vm = this;
 
     vm.graph = graph;
+    vm.tool = Tool.ADD_ELEMENT;
+
     vm.authentication = Authentication;
     vm.onClick = onClick;
     vm.save = save;
 
+    EditGraphController.Tool = Tool;
+
 
     function onClick(e) {
-      vm.graph.vertices.push(new GraphsService.Vertex({
-        x: e.offsetX,
-        y: e.offsetY,
-      }));
+      switch (vm.tool) {
+        case Tool.CURSOR:
+          break;
+        case Tool.ADD_ELEMENT:
+          vm.graph.vertices.push(new GraphsService.Vertex({
+            x: e.offsetX,
+            y: e.offsetY,
+          }));
+          break;
+        case Tool.ADD_CAPTION:
+          break;
+        case Tool.SCISSORS:
+          break;
+        case Tool.PAINTBRUSH:
+          break;
+      }
     };
 
     function save() {
@@ -37,4 +53,13 @@
       }
     }
   }
+
+
+  var Tool = {
+    CURSOR: 'cursor',
+    ADD_ELEMENT: 'add_element',
+    ADD_CAPTION: 'add_caption',
+    SCISSORS: 'scissors',
+    PAINTBRUSH: 'paintbrush',
+  };
 })();
