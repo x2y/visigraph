@@ -8,6 +8,8 @@
   EditGraphController.$inject = ['$scope', '$state', 'graphResolve', 'GraphsService', 'Authentication'];
 
 
+  var WHEEL_SCALE_FACTOR = 0.2;
+
   var Tool = {
     CURSOR: 'cursor',
     ADD_ELEMENT: 'add_element',
@@ -36,13 +38,15 @@
 
 
     function onClick(e) {
+      var mousePoint = { x: e.offsetX, y: e.offsetY };
+      var svgPoint = invertPoint(vm.transform, mousePoint.x, mousePoint.y);
       switch (vm.tool) {
         case Tool.CURSOR:
           break;
         case Tool.ADD_ELEMENT:
           vm.graph.vertices.push(new GraphsService.Vertex({
-            x: e.offsetX,
-            y: e.offsetY,
+            x: svgPoint.x,
+            y: svgPoint.y,
           }));
           break;
         case Tool.ADD_CAPTION:
@@ -64,8 +68,31 @@
     }
 
     function onWheel(e, delta, deltaX, deltaY) {
-      console.info('onWheel', e, delta, deltaX, deltaY);
+      var x = e.originalEvent.offsetX;
+      var y = e.originalEvent.offsetY;
+      translate(vm.transform, -x, -y);
+      scale(vm.transform, delta * WHEEL_SCALE_FACTOR + 1);
+      translate(vm.transform, x, y);
       e.preventDefault();
+    }
+
+    function translate(matrix, x, y) {
+      matrix[0][2] += x;
+      matrix[1][2] += y;
+    }
+
+    function scale(matrix, factor) {
+      matrix[0][0] *= factor;
+      matrix[0][2] *= factor;
+      matrix[1][1] *= factor;
+      matrix[1][2] *= factor;
+    }
+
+    function invertPoint(matrix, x, y) {
+      return {
+        x: (x - matrix[0][2]) / matrix[0][0],
+        y: (y - matrix[1][2]) / matrix[1][1],
+      };
     }
 
     function save() {
