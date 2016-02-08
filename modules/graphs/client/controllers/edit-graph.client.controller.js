@@ -5,9 +5,12 @@
     .module('graphs')
     .controller('EditGraphController', EditGraphController);
 
-  EditGraphController.$inject = ['$scope', '$state', 'graphResolve', 'GraphsService', 'Authentication'];
+  EditGraphController.$inject = ['$scope', '$state', '$interval', 'graphResolve', 'GraphsService', 'Authentication'];
 
 
+  var PAN_SPEED_FACTOR = 0.15;
+  var VIEWPORT_HEIGHT = 500;
+  var VIEWPORT_WIDTH = 500;
   var WHEEL_SCALE_FACTOR = 0.2;
 
   var Tool = {
@@ -19,9 +22,11 @@
   };
 
 
-  function EditGraphController($scope, $state, graph, GraphsService, Authentication) {
-    var vm = this;
+  function EditGraphController($scope, $state, $interval, graph, GraphsService, Authentication) {
+    var panInterval = -1;
+    var panEndPoint = { x: 0, y: 0 };
 
+    var vm = this;
     vm.graph = graph;
     vm.transform = [[1, 0, 0],
                     [0, 1, 0],
@@ -30,6 +35,7 @@
 
     vm.authentication = Authentication;
     vm.onClick = onClick;
+    vm.onDblClick = onDblClick;
     vm.onVertexClick = onVertexClick;
     vm.onWheel = onWheel;
     vm.save = save;
@@ -56,6 +62,24 @@
         case Tool.PAINTBRUSH:
           break;
       }
+    }
+
+    function onDblClick(e) {
+      var mousePoint = { x: e.offsetX, y: e.offsetY };
+      panEndPoint = invertPoint(vm.transform, mousePoint.x, mousePoint.y);      
+
+      $interval.cancel(panInterval);
+      panInterval = $interval(function() {
+        var panStartPoint = invertPoint(vm.transform, VIEWPORT_WIDTH / 2, VIEWPORT_HEIGHT / 2);
+        var xDelta = (panEndPoint.x - panStartPoint.x) * PAN_SPEED_FACTOR;
+        var yDelta = (panEndPoint.y - panStartPoint.y) * PAN_SPEED_FACTOR;
+
+        if (Math.abs(xDelta) < 0.1 && Math.abs(yDelta) < 0.1) {
+          $interval.cancel(panInterval);
+        } else {
+          translate(vm.transform, -xDelta, -yDelta);
+        }
+      }, 30);
     }
 
     function onVertexClick(vertex, e) {
