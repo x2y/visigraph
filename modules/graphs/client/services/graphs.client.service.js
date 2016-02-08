@@ -95,7 +95,7 @@
       resourceData.vertices = [];
       resourceData.incidences = new Map();
       for (var i = 0; i < data.vertices.length; ++i) {
-        var vertexData = data.vertices[i]
+        var vertexData = data.vertices[i];
         var vertex = new Vertex(vertexData);
         vertexIds[vertex.id] = vertex;
         resourceData.vertices.push(vertex);
@@ -103,7 +103,7 @@
       }
 
       resourceData.edges = [];
-      for (var i = 0; i < data.edges.length; ++i) {
+      for (i = 0; i < data.edges.length; ++i) {
         var edgeData = data.edges[i];
         edgeData.from = vertexIds[edgeData.fromId];
         edgeData.to = vertexIds[edgeData.toId];

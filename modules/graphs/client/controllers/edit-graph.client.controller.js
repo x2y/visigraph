@@ -11,6 +11,9 @@
     var vm = this;
 
     vm.graph = graph;
+    vm.transform = [[1, 0, 0],
+                    [0, 1, 0],
+                    [0, 0, 1]];
     vm.tool = Tool.ADD_ELEMENT;
 
     vm.authentication = Authentication;
@@ -38,7 +41,7 @@
         case Tool.PAINTBRUSH:
           break;
       }
-    };
+    }
 
     function onVertexClick(vertex, e) {
       switch (vm.tool) {
@@ -47,7 +50,7 @@
           e.stopPropagation();
           break;
       }
-    };
+    }
 
     function save() {
       vm.graph.$update(successCallback, errorCallback);

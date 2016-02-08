@@ -4,18 +4,20 @@
   </div>
   <div class="col-md-12">
     <svg ng-click="vm.onClick($event)">
-      <line ng-repeat="edge in vm.graph.edges" class="edge"
-          ng-attr-stroke-width="{{edge.thickness}}"
-          ng-attr-x1="{{edge.from.x}}" ng-attr-y1="{{edge.from.y}}"
-          ng-attr-x2="{{edge.to.x}}"   ng-attr-y2="{{edge.to.y}}">
-        <title>{{edge.label}}</title>
-      </line>
-      <circle ng-repeat="vertex in vm.graph.vertices" class="vertex"
-          ng-attr-r="{{vertex.radius}}" ng-attr-fill="{{vertex.color}}"
-          ng-attr-cx="{{vertex.x}}" ng-attr-cy="{{vertex.y}}"
-          ng-click="vm.onVertexClick(vertex, $event)">
-        <title>{{vertex.label}}</title>
-      </circle>
+      <g ng-attr-transform="{{vm.transform | svgMatrix}}">
+        <line ng-repeat="edge in vm.graph.edges" class="edge"
+            ng-attr-stroke-width="{{edge.thickness}}"
+            ng-attr-x1="{{edge.from.x}}" ng-attr-y1="{{edge.from.y}}"
+            ng-attr-x2="{{edge.to.x}}"   ng-attr-y2="{{edge.to.y}}">
+          <title>{{edge.label}}</title>
+        </line>
+        <circle ng-repeat="vertex in vm.graph.vertices" class="vertex"
+            ng-attr-r="{{vertex.radius}}" ng-attr-fill="{{vertex.color}}"
+            ng-attr-cx="{{vertex.x}}" ng-attr-cy="{{vertex.y}}"
+            ng-click="vm.onVertexClick(vertex, $event)">
+          <title>{{vertex.label}}</title>
+        </circle>
+      </g>
     </svg>
     <br>
     <label><input type="radio" value="cursor" ng-model="vm.tool"> Cursor</label>
