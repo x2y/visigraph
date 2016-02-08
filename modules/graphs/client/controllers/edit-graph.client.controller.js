@@ -7,6 +7,16 @@
 
   EditGraphController.$inject = ['$scope', '$state', 'graphResolve', 'GraphsService', 'Authentication'];
 
+
+  var Tool = {
+    CURSOR: 'cursor',
+    ADD_ELEMENT: 'add_element',
+    ADD_CAPTION: 'add_caption',
+    SCISSORS: 'scissors',
+    PAINTBRUSH: 'paintbrush',
+  };
+
+
   function EditGraphController($scope, $state, graph, GraphsService, Authentication) {
     var vm = this;
 
@@ -19,6 +29,7 @@
     vm.authentication = Authentication;
     vm.onClick = onClick;
     vm.onVertexClick = onVertexClick;
+    vm.onWheel = onWheel;
     vm.save = save;
 
     EditGraphController.Tool = Tool;
@@ -52,6 +63,11 @@
       }
     }
 
+    function onWheel(e, delta, deltaX, deltaY) {
+      console.info('onWheel', e, delta, deltaX, deltaY);
+      e.preventDefault();
+    }
+
     function save() {
       vm.graph.$update(successCallback, errorCallback);
 
@@ -66,13 +82,4 @@
       }
     }
   }
-
-
-  var Tool = {
-    CURSOR: 'cursor',
-    ADD_ELEMENT: 'add_element',
-    ADD_CAPTION: 'add_caption',
-    SCISSORS: 'scissors',
-    PAINTBRUSH: 'paintbrush',
-  };
 })();
