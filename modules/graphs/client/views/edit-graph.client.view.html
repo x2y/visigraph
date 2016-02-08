@@ -3,19 +3,25 @@
     <h1>{{vm.graph.name}}</h1>
   </div>
   <div class="col-md-12">
-    <svg class="viewport" ng-click="vm.onClick($event)" ng-dblclick="vm.onDblClick($event)"
-        msd-wheel="vm.onWheel($event, $delta, $deltaX, $deltaY)">
+    <svg class="viewport" ng-dblclick="vm.onDblClick($event)"
+        msd-wheel="vm.onWheel($event, $delta, $deltaX, $deltaY)"
+        ng-mousedown="vm.onViewportMousedown($event)"
+        ng-mouseup="vm.onViewportMouseup($event)">
       <g ng-attr-transform="{{vm.transform | svgMatrix}}">
-        <line ng-repeat="edge in vm.graph.edges" class="edge"
+        <line ng-repeat="edge in vm.graph.edges"
+            ng-attr-class="{{'edge' + (edge.isSelected ? ' selected' : '')}}"
+            ng-attr-stroke="{{edge.color}}"
             ng-attr-stroke-width="{{edge.thickness}}"
             ng-attr-x1="{{edge.from.x}}" ng-attr-y1="{{edge.from.y}}"
             ng-attr-x2="{{edge.to.x}}"   ng-attr-y2="{{edge.to.y}}">
           <title>{{edge.label}}</title>
         </line>
-        <circle ng-repeat="vertex in vm.graph.vertices" class="vertex"
+        <circle ng-repeat="vertex in vm.graph.vertices"
+            ng-attr-class="{{'vertex' + (vertex.isSelected ? ' selected' : '')}}"
             ng-attr-r="{{vertex.radius}}" ng-attr-fill="{{vertex.color}}"
             ng-attr-cx="{{vertex.x}}" ng-attr-cy="{{vertex.y}}"
-            ng-click="vm.onVertexClick(vertex, $event)">
+            ng-mousedown="vm.onVertexMousedown(vertex, $event)"
+            ng-mouseup="vm.onVertexMouseup(vertex, $event)">
           <title>{{vertex.label}}</title>
         </circle>
       </g>

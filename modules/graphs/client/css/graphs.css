@@ -10,5 +10,8 @@
   .viewport .vertex {
     stroke-width: 1px;
     stroke: #000; }
+    .viewport .vertex.selected {
+      fill: #9494CE;
+      stroke: #00007F; }
 
 /*# sourceMappingURL=graphs.css.map */

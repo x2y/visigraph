@@ -15,5 +15,10 @@
   .vertex {
     stroke-width: 1px;
     stroke: #000;
+
+    &.selected {
+      fill: #9494CE;
+      stroke: #00007F;
+    }
   }
 }

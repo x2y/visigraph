@@ -32,32 +32,96 @@
     vm.tool = Tool.ADD_ELEMENT;
 
     vm.authentication = Authentication;
-    vm.onClick = onClick;
+    vm.onViewportMousedown = onViewportMousedown;
+    vm.onViewportMouseup = onViewportMouseup;
+    vm.onVertexMousedown = onVertexMousedown;
+    vm.onVertexMouseup = onVertexMouseup;
     vm.onDblClick = onDblClick;
-    vm.onVertexClick = onVertexClick;
     vm.onWheel = onWheel;
     vm.save = save;
 
     EditGraphController.Tool = Tool;
 
 
-    function onClick(e) {
+    function onViewportMousedown(e) {
+      switch (vm.tool) {
+        case Tool.CURSOR:
+          if (!e.shiftKey) {
+            vm.graph.deselectAll();
+          }
+          break;
+      }
+    }
+
+    function onViewportMouseup(e) {
       var mousePoint = { x: e.offsetX, y: e.offsetY };
       var svgPoint = invertPoint(vm.transform, mousePoint.x, mousePoint.y);
       switch (vm.tool) {
         case Tool.CURSOR:
           break;
         case Tool.ADD_ELEMENT:
-          vm.graph.vertices.push(new GraphsService.Vertex({
+          var vertex = new GraphsService.Vertex({
             x: svgPoint.x,
             y: svgPoint.y,
-          }));
+          });
+          vm.graph.vertices.push(vertex);
+
+          var selectedVertices = vm.graph.getSelectedVertices();
+          for (var i = 0; i < selectedVertices.length; ++i) {
+            vm.graph.edges.push(new GraphsService.Edge({
+              from: selectedVertices[i],
+              to: vertex
+            }));
+            selectedVertices[i].isSelected = false;
+          }
           break;
         case Tool.ADD_CAPTION:
           break;
         case Tool.SCISSORS:
           break;
         case Tool.PAINTBRUSH:
+          break;
+      }
+    }
+
+    function onVertexMousedown(vertex, e) {
+      switch (vm.tool) {
+        case Tool.CURSOR:
+          if (!e.shiftKey) {
+            vm.graph.deselectAll();
+          }
+          vertex.isSelected = true;
+          e.stopPropagation();
+          break;
+        case Tool.ADD_ELEMENT:
+          if (!vm.graph.hasSelectedVertices()) {
+            vertex.isSelected = true;
+            e.stopPropagation();
+          }
+          break;
+        case Tool.SCISSORS:
+          vm.graph.vertices.splice(vm.graph.vertices.indexOf(vertex), 1);
+          e.stopPropagation();
+          break;
+      }
+    }
+
+    function onVertexMouseup(vertex, e) {
+      switch (vm.tool) {
+        case Tool.ADD_ELEMENT:
+          var selectedVertices = vm.graph.getSelectedVertices();
+          if (selectedVertices.length == 1 && selectedVertices[0] == vertex) {
+            // Do nothing.
+          } else {
+            for (var i = 0; i < selectedVertices.length; ++i) {
+              vm.graph.edges.push(new GraphsService.Edge({
+                from: selectedVertices[i],
+                to: vertex
+              }));
+              selectedVertices[i].isSelected = false;
+            }
+          }
+          e.stopPropagation();
           break;
       }
     }
@@ -80,15 +144,6 @@
           translate(vm.transform, -xDelta, -yDelta);
         }
       }, 30);
-    }
-
-    function onVertexClick(vertex, e) {
-      switch (vm.tool) {
-        case Tool.SCISSORS:
-          vm.graph.vertices.splice(vm.graph.vertices.indexOf(vertex), 1);
-          e.stopPropagation();
-          break;
-      }
     }
 
     function onWheel(e, delta, deltaX, deltaY) {

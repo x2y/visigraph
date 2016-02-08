@@ -52,6 +52,13 @@
     Resource.prototype.incidences = new Map();
     Resource.prototype.captions = [];
 
+    Resource.prototype.selectAll = selectAll;
+    Resource.prototype.deselectAll = deselectAll;
+    Resource.prototype.hasSelectedVertices = hasSelectedVertices;
+    Resource.prototype.getSelectedVertices = getSelectedVertices;
+    Resource.prototype.hasSelectedEdges = hasSelectedEdges;
+    Resource.prototype.getSelectedEdges = getSelectedEdges;
+
     Resource.Vertex = Vertex;
     Resource.Edge = Edge;
 
@@ -129,6 +136,48 @@
       }
       return validResourceData;
     }
+
+    function selectAll() {
+      for (var i = 0; i < this.vertices.length; ++i) {
+        this.vertices[i].isSelected = true;
+      }
+      for (var i = 0; i < this.edges.length; ++i) {
+        this.edges[i].isSelected = true;
+      }
+    }
+
+    function deselectAll() {
+      for (var i = 0; i < this.vertices.length; ++i) {
+        this.vertices[i].isSelected = false;
+      }
+      for (var i = 0; i < this.edges.length; ++i) {
+        this.edges[i].isSelected = false;
+      }
+    }
+
+    function hasSelectedVertices() {
+      return this.vertices.some(function(vertex) {
+        return vertex.isSelected;
+      });
+    }
+
+    function getSelectedVertices() {
+      return this.vertices.filter(function(vertex) {
+        return vertex.isSelected;
+      });
+    }
+
+    function hasSelectedEdges() {
+      return this.edges.some(function(edge) {
+        return edge.isSelected;
+      });
+    }
+
+    function getSelectedEdges() {
+      return this.edges.filter(function(edge) {
+        return edge.isSelected;
+      });
+    }
   }
 
 
@@ -138,7 +187,7 @@
     this.x = opt_data.x || 0;
     this.y = opt_data.y || 0;
     this.label = opt_data.label || '';
-    this.radius = opt_data.radius || 8;
+    this.radius = opt_data.radius || 5;
     this.color = opt_data.color || '#ddd';
     this.isSelected = opt_data.isSelected || false;
     this.weight = opt_data.weight || 1;
@@ -169,10 +218,10 @@
     this.handleY = opt_data.handleY || 0;
     this.label = opt_data.label || '';
     this.radius = opt_data.radius || 10;
-    this.color = opt_data.color || '#ddd';
+    this.color = opt_data.color || '#444';
     this.isSelected = opt_data.isSelected || false;
     this.weight = opt_data.weight || 1;
-    this.thickness = opt_data.thickness || 1;
+    this.thickness = opt_data.thickness || 1.5;
   }
 
   Edge.prototype.toSerializable = function () {
