@@ -9,8 +9,6 @@
 
 
   var PAN_SPEED_FACTOR = 0.15;
-  var VIEWPORT_HEIGHT = 500;
-  var VIEWPORT_WIDTH = 500;
   var WHEEL_SCALE_FACTOR = 0.2;
 
   var Tool = {
@@ -65,12 +63,14 @@
     }
 
     function onDblClick(e) {
+      var viewportEl = e.target.closest('.viewport');
       var mousePoint = { x: e.offsetX, y: e.offsetY };
       panEndPoint = invertPoint(vm.transform, mousePoint.x, mousePoint.y);      
 
       $interval.cancel(panInterval);
       panInterval = $interval(function() {
-        var panStartPoint = invertPoint(vm.transform, VIEWPORT_WIDTH / 2, VIEWPORT_HEIGHT / 2);
+        var panStartPoint = invertPoint(vm.transform, viewportEl.offsetWidth / 2,
+            viewportEl.offsetHeight / 2)
         var xDelta = (panEndPoint.x - panStartPoint.x) * PAN_SPEED_FACTOR;
         var yDelta = (panEndPoint.y - panStartPoint.y) * PAN_SPEED_FACTOR;
 

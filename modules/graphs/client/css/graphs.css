@@ -5,7 +5,7 @@
   user-select: none;
   height: 500px;
   outline: 1px solid #ddd;
-  width: 500px; }
+  width: 100%; }
   .viewport .vertex {
     stroke-width: 1px;
     stroke: #000; }
