@@ -3,6 +3,7 @@
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+  cursor: default;
   height: 500px;
   outline: 1px solid #ddd;
   width: 100%; }
