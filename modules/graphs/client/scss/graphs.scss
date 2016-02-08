@@ -5,7 +5,7 @@
           user-select: $user-select;
 }
 
-svg {
+.viewport {
   @include user-select(none);
   height: 500px;
   outline: 1px solid #ddd;

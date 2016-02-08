@@ -3,7 +3,7 @@
     <h1>{{vm.graph.name}}</h1>
   </div>
   <div class="col-md-12">
-    <svg ng-click="vm.onClick($event)">
+    <svg class="viewport" ng-click="vm.onClick($event)">
       <g ng-attr-transform="{{vm.transform | svgMatrix}}">
         <line ng-repeat="edge in vm.graph.edges" class="edge"
             ng-attr-stroke-width="{{edge.thickness}}"
