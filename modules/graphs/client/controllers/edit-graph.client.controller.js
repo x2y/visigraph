@@ -60,18 +60,17 @@
         case Tool.CURSOR:
           break;
         case Tool.ADD_ELEMENT:
-          var vertex = new GraphsService.Vertex({
+          var vertex = vm.graph.addVertex({
             x: svgPoint.x,
             y: svgPoint.y,
           });
-          vm.graph.vertices.push(vertex);
 
           var selectedVertices = vm.graph.getSelectedVertices();
           for (var i = 0; i < selectedVertices.length; ++i) {
-            vm.graph.edges.push(new GraphsService.Edge({
+            vm.graph.addEdge({
               from: selectedVertices[i],
               to: vertex
-            }));
+            });
             selectedVertices[i].isSelected = false;
           }
           break;
@@ -100,7 +99,7 @@
           }
           break;
         case Tool.SCISSORS:
-          vm.graph.vertices.splice(vm.graph.vertices.indexOf(vertex), 1);
+          vm.graph.removeVertex(vertex);
           e.stopPropagation();
           break;
       }
@@ -110,14 +109,14 @@
       switch (vm.tool) {
         case Tool.ADD_ELEMENT:
           var selectedVertices = vm.graph.getSelectedVertices();
-          if (selectedVertices.length == 1 && selectedVertices[0] == vertex) {
+          if (selectedVertices.length === 1 && selectedVertices[0] === vertex) {
             // Do nothing.
           } else {
             for (var i = 0; i < selectedVertices.length; ++i) {
-              vm.graph.edges.push(new GraphsService.Edge({
+              vm.graph.addEdge({
                 from: selectedVertices[i],
                 to: vertex
-              }));
+              });
               selectedVertices[i].isSelected = false;
             }
           }

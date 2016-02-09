@@ -8,7 +8,7 @@
         ng-mousedown="vm.onViewportMousedown($event)"
         ng-mouseup="vm.onViewportMouseup($event)">
       <g ng-attr-transform="{{vm.transform | svgMatrix}}">
-        <line ng-repeat="edge in vm.graph.edges"
+        <line ng-repeat="(id, edge) in vm.graph.edges"
             ng-attr-class="{{'edge' + (edge.isSelected ? ' selected' : '')}}"
             ng-attr-stroke="{{edge.color}}"
             ng-attr-stroke-width="{{edge.thickness}}"
@@ -16,7 +16,7 @@
             ng-attr-x2="{{edge.to.x}}"   ng-attr-y2="{{edge.to.y}}">
           <title>{{edge.label}}</title>
         </line>
-        <circle ng-repeat="vertex in vm.graph.vertices"
+        <circle ng-repeat="(id, vertex) in vm.graph.vertices"
             ng-attr-class="{{'vertex' + (vertex.isSelected ? ' selected' : '')}}"
             ng-attr-r="{{vertex.radius}}" ng-attr-fill="{{vertex.color}}"
             ng-attr-cx="{{vertex.x}}" ng-attr-cy="{{vertex.y}}"
@@ -32,7 +32,7 @@
     <label><input type="radio" value="add_caption" ng-model="vm.tool"> Add caption</label>
     <label><input type="radio" value="scissors" ng-model="vm.tool"> Scissors</label>
     <label><input type="radio" value="paintbrush" ng-model="vm.tool"> Paintbrush</label>
-    <div>{{vm.graph}}</div>
+    <br>
     <button ng-click="vm.save()">Save</button>
   </div>
 </section>

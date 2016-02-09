@@ -47,11 +47,14 @@
     Resource.prototype.allowMultiEdges = false;
     Resource.prototype.allowCycles = true;
 
-    Resource.prototype.vertices = [];
-    Resource.prototype.edges = [];
-    Resource.prototype.incidences = new Map();
-    Resource.prototype.captions = [];
+    Resource.prototype.vertices = {};
+    Resource.prototype.edges = {};
+    Resource.prototype.captions = {};
 
+    Resource.prototype.addVertex = addVertex;
+    Resource.prototype.removeVertex = removeVertex;
+    Resource.prototype.addEdge = addEdge;
+    Resource.prototype.removeEdge = removeEdge;
     Resource.prototype.selectAll = selectAll;
     Resource.prototype.deselectAll = deselectAll;
     Resource.prototype.hasSelectedVertices = hasSelectedVertices;
@@ -72,18 +75,26 @@
     }
 
     function transformRequest(resourceData, header) {
+      var vertices = {};
+      for (var id in resourceData.vertices) {
+        vertices[id] = resourceData.vertices[id].toSerializable();
+      }
+      delete resourceData.vertices;  // Prevent circular references.
+
+      var edges = {};
+      for (id in resourceData.edges) {
+        edges[id] = resourceData.edges[id].toSerializable();
+      }
+      delete resourceData.edges;  // Prevent circular references.
+
       resourceData.data = angular.toJson({
         version: resourceData.version,
         allowLoops: resourceData.allowLoops,
         allowDirectedEdges: resourceData.allowDirectedEdges,
         allowMultiEdges: resourceData.allowMultiEdges,
         allowCycles: resourceData.allowCycles,
-        vertices: resourceData.vertices.map(function(v) {
-          return v.toSerializable();
-        }),
-        edges: resourceData.edges.map(function(e) {
-          return e.toSerializable();
-        }),
+        vertices: vertices,
+        edges: edges,
       });
       return resourceData;
     }
@@ -98,28 +109,14 @@
       resourceData.allowMultiEdges = data.allowMultiEdges;
       resourceData.allowCycles = data.allowCycles;
 
-      var vertexIds = {};
-      resourceData.vertices = [];
-      resourceData.incidences = new Map();
-      for (var i = 0; i < data.vertices.length; ++i) {
-        var vertexData = data.vertices[i];
-        var vertex = new Vertex(vertexData);
-        vertexIds[vertex.id] = vertex;
-        resourceData.vertices.push(vertex);
-        resourceData.incidences[vertex] = [];
+      resourceData.vertices = {};
+      for (var vertexId in data.vertices) {
+        addVertex.call(resourceData, data.vertices[vertexId]);
       }
 
-      resourceData.edges = [];
-      for (i = 0; i < data.edges.length; ++i) {
-        var edgeData = data.edges[i];
-        edgeData.from = vertexIds[edgeData.fromId];
-        edgeData.to = vertexIds[edgeData.toId];
-        var edge = new Edge(edgeData);
-        resourceData.edges.push(edge);
-        resourceData.incidences[edge.from].push(edge);
-        if (edge.from !== edge.to) {
-          resourceData.incidences[edge.to].push(edge);
-        }
+      resourceData.edges = {};
+      for (var edgeId in data.edges) {
+        addEdge.call(resourceData, data.edges[edgeId]);
       }
 
       return resourceData;
@@ -137,46 +134,125 @@
       return validResourceData;
     }
 
-    function selectAll() {
-      for (var i = 0; i < this.vertices.length; ++i) {
-        this.vertices[i].isSelected = true;
+    function addVertex(vertex) {
+      /*jshint validthis: true */
+      if (!(vertex instanceof Vertex)) {
+        vertex = new Vertex(vertex);
       }
-      for (var i = 0; i < this.edges.length; ++i) {
-        this.edges[i].isSelected = true;
+      if (vertex.id in this.vertices) {
+        return;
+      }
+
+      this.vertices[vertex.id] = vertex;
+      return vertex;
+    }
+
+    function removeVertex(vertex) {
+      /*jshint validthis: true */
+      if (!(vertex instanceof Vertex)) {
+        vertex = this.vertices[vertex];
+      }
+      
+      for (var edgeId in vertex.edges) {
+        this.removeEdge(edgeId);
+      }
+      delete this.vertices[vertex.id];
+      return vertex;
+    }
+
+    function addEdge(edge) {
+      /*jshint validthis: true */
+      if (!(edge instanceof Edge)) {
+        if (!edge.from && edge.fromId != null) {
+          edge.from = this.vertices[edge.fromId];
+        }
+        if (!edge.to && edge.toId != null) {
+          edge.to = this.vertices[edge.toId];
+        }
+        edge = new Edge(edge);
+      }
+      if (edge.id in this.edges) {
+        return;
+      }
+
+      this.edges[edge.id] = edge;
+      edge.from.edges[edge.id] = edge;
+      edge.to.edges[edge.id] = edge;
+      return edge;
+    }
+
+    function removeEdge(edge) {
+      /*jshint validthis: true */
+      if (!(edge instanceof Edge)) {
+        edge = this.edges[edge];
+      }
+      
+      delete edge.from.edges[edge.id];
+      delete edge.to.edges[edge.id];
+      delete this.edges[edge.id];
+      return edge;
+    }
+
+    function selectAll() {
+      /*jshint validthis: true */
+      for (var vertexId in this.vertices) {
+        this.vertices[vertexId].isSelected = true;
+      }
+      for (var edgeId in this.edges) {
+        this.edges[edgeId].isSelected = true;
       }
     }
 
     function deselectAll() {
-      for (var i = 0; i < this.vertices.length; ++i) {
-        this.vertices[i].isSelected = false;
+      /*jshint validthis: true */
+      for (var vertexId in this.vertices) {
+        this.vertices[vertexId].isSelected = false;
       }
-      for (var i = 0; i < this.edges.length; ++i) {
-        this.edges[i].isSelected = false;
+      for (var edgeId in this.edges) {
+        this.edges[edgeId].isSelected = false;
       }
     }
 
     function hasSelectedVertices() {
-      return this.vertices.some(function(vertex) {
-        return vertex.isSelected;
-      });
+      /*jshint validthis: true */
+      for (var id in this.vertices) {
+        if (this.vertices[id].isSelected) {
+          return true;
+        }
+      }
+      return false;
     }
 
     function getSelectedVertices() {
-      return this.vertices.filter(function(vertex) {
-        return vertex.isSelected;
-      });
+      /*jshint validthis: true */
+      var selected = [];
+      for (var id in this.vertices) {
+        if (this.vertices[id].isSelected) {
+          selected.push(this.vertices[id]);
+        }
+      }
+      return selected;
     }
 
     function hasSelectedEdges() {
-      return this.edges.some(function(edge) {
-        return edge.isSelected;
-      });
+      /*jshint validthis: true */
+      for (var id in this.edges) {
+        if (this.edges[id].isSelected) {
+          return true;
+        }
+      }
+      return false;
     }
 
     function getSelectedEdges() {
-      return this.edges.filter(function(edge) {
-        return edge.isSelected;
-      });
+      /*jshint validthis: true */
+      var selected = [];
+      for (var id in this.edges) {
+        if (this.edges[id].isSelected) {
+          selected.push(this.edges[id]);
+        }
+      }
+      return selected;
     }
   }
 
@@ -186,6 +262,7 @@
     this.id = opt_data.id || generateRandomId();
     this.x = opt_data.x || 0;
     this.y = opt_data.y || 0;
+    this.edges = opt_data.edges || {};
     this.label = opt_data.label || '';
     this.radius = opt_data.radius || 5;
     this.color = opt_data.color || '#ddd';
