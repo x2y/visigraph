@@ -129,19 +129,20 @@
     function onDblClick(e) {
       var viewportEl = e.target.closest('.viewport');
       var mousePoint = { x: e.offsetX, y: e.offsetY };
-      panEndPoint = invertPoint(vm.transform, mousePoint.x, mousePoint.y);      
-
+      panEndPoint = invertPoint(vm.transform, mousePoint.x, mousePoint.y);
+      
       $interval.cancel(panInterval);
       panInterval = $interval(function() {
         var panStartPoint = invertPoint(vm.transform, viewportEl.offsetWidth / 2,
-            viewportEl.offsetHeight / 2)
+            viewportEl.offsetHeight / 2);
+        var scale = vm.transform[0][0];
         var xDelta = (panEndPoint.x - panStartPoint.x) * PAN_SPEED_FACTOR;
         var yDelta = (panEndPoint.y - panStartPoint.y) * PAN_SPEED_FACTOR;
 
         if (Math.abs(xDelta) < 0.1 && Math.abs(yDelta) < 0.1) {
           $interval.cancel(panInterval);
         } else {
-          translate(vm.transform, -xDelta, -yDelta);
+          translate(vm.transform, -xDelta * scale, -yDelta * scale);
         }
       }, 30);
     }
