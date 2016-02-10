@@ -135,7 +135,7 @@
     }
 
     function addVertex(vertex) {
-      /*jshint validthis: true */
+      /* jshint validthis: true */
       if (!(vertex instanceof Vertex)) {
         vertex = new Vertex(vertex);
       }
@@ -148,7 +148,7 @@
     }
 
     function removeVertex(vertex) {
-      /*jshint validthis: true */
+      /* jshint validthis: true */
       if (!(vertex instanceof Vertex)) {
         vertex = this.vertices[vertex];
       }
@@ -161,7 +161,7 @@
     }
 
     function addEdge(edge) {
-      /*jshint validthis: true */
+      /* jshint validthis: true */
       if (!(edge instanceof Edge)) {
         if (!edge.from && edge.fromId != null) {
           edge.from = this.vertices[edge.fromId];
@@ -182,7 +182,7 @@
     }
 
     function removeEdge(edge) {
-      /*jshint validthis: true */
+      /* jshint validthis: true */
       if (!(edge instanceof Edge)) {
         edge = this.edges[edge];
       }
@@ -194,7 +194,7 @@
     }
 
     function selectAll() {
-      /*jshint validthis: true */
+      /* jshint validthis: true */
       for (var vertexId in this.vertices) {
         this.vertices[vertexId].isSelected = true;
       }
@@ -204,7 +204,7 @@
     }
 
     function deselectAll() {
-      /*jshint validthis: true */
+      /* jshint validthis: true */
       for (var vertexId in this.vertices) {
         this.vertices[vertexId].isSelected = false;
       }
@@ -214,7 +214,7 @@
     }
 
     function hasSelectedVertices() {
-      /*jshint validthis: true */
+      /* jshint validthis: true */
       for (var id in this.vertices) {
         if (this.vertices[id].isSelected) {
           return true;
@@ -224,7 +224,7 @@
     }
 
     function getSelectedVertices() {
-      /*jshint validthis: true */
+      /* jshint validthis: true */
       var selected = [];
       for (var id in this.vertices) {
         if (this.vertices[id].isSelected) {
@@ -235,7 +235,7 @@
     }
 
     function hasSelectedEdges() {
-      /*jshint validthis: true */
+      /* jshint validthis: true */
       for (var id in this.edges) {
         if (this.edges[id].isSelected) {
           return true;
@@ -245,7 +245,7 @@
     }
 
     function getSelectedEdges() {
-      /*jshint validthis: true */
+      /* jshint validthis: true */
       var selected = [];
       for (var id in this.edges) {
         if (this.edges[id].isSelected) {
