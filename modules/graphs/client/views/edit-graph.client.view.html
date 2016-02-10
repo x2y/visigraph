@@ -8,21 +8,39 @@
         ng-mousedown="vm.onViewportMousedown($event)"
         ng-mouseup="vm.onViewportMouseup($event)">
       <g ng-attr-transform="{{vm.transform | svgMatrix}}">
+        <!-- Edges -->
         <line ng-repeat="(id, edge) in vm.graph.edges"
             ng-attr-class="{{'edge' + (edge.isSelected ? ' selected' : '')}}"
             ng-attr-stroke="{{edge.color}}"
             ng-attr-stroke-width="{{edge.thickness}}"
             ng-attr-x1="{{edge.from.x}}" ng-attr-y1="{{edge.from.y}}"
             ng-attr-x2="{{edge.to.x}}"   ng-attr-y2="{{edge.to.y}}">
-          <title>{{edge.label}}</title>
+          <title ng-if="edge.label">{{edge.label}}</title>
         </line>
+        <!-- Edge handles -->
+        <circle ng-repeat="(id, edge) in vm.graph.edges"
+            ng-attr-class="{{'handle' + (edge.isSelected ? ' selected' : '')}}"
+            ng-attr-r="{{1.75 * edge.thickness}}" ng-attr-fill="{{edge.color}}"
+            ng-attr-cx="{{edge.handleX}}" ng-attr-cy="{{edge.handleY}}"
+            ng-mousedown="vm.onEdgeMousedown(edge, $event)"
+            ng-mouseup="vm.onEdgeMouseup(edge, $event)">
+        </circle>
+        <!-- Edge labels -->
+        <text ng-repeat="(id, edge) in vm.graph.edges" ng-show="{{edge.label}}"
+            ng-attr-class="{{'label' + (edge.isSelected ? ' selected' : '')}}"
+            ng-attr-fill="{{edge.color}}"
+            ng-attr-x="{{edge.handleX + 3 * edge.thickness}}"
+            ng-attr-y="{{edge.handleY + 2 * edge.thickness}}">
+          {{edge.label}}
+        </text>
+        <!-- Vertices -->
         <circle ng-repeat="(id, vertex) in vm.graph.vertices"
             ng-attr-class="{{'vertex' + (vertex.isSelected ? ' selected' : '')}}"
             ng-attr-r="{{vertex.radius}}" ng-attr-fill="{{vertex.color}}"
             ng-attr-cx="{{vertex.x}}" ng-attr-cy="{{vertex.y}}"
             ng-mousedown="vm.onVertexMousedown(vertex, $event)"
             ng-mouseup="vm.onVertexMouseup(vertex, $event)">
-          <title>{{vertex.label}}</title>
+          <title ng-if="vertex.label">{{vertex.label}}</title>
         </circle>
       </g>
     </svg>

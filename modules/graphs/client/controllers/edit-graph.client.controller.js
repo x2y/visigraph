@@ -36,6 +36,8 @@
     vm.onViewportMouseup = onViewportMouseup;
     vm.onVertexMousedown = onVertexMousedown;
     vm.onVertexMouseup = onVertexMouseup;
+    vm.onEdgeMousedown = onEdgeMousedown;
+    vm.onEdgeMouseup = onEdgeMouseup;
     vm.onDblClick = onDblClick;
     vm.onWheel = onWheel;
     vm.save = save;
@@ -123,6 +125,21 @@
           e.stopPropagation();
           break;
       }
+    }
+
+    function onEdgeMousedown(edge, e) {
+      switch (vm.tool) {
+        case Tool.CURSOR:
+          if (!e.shiftKey) {
+            vm.graph.deselectAll();
+          }
+          edge.isSelected = true;
+          e.stopPropagation();
+          break;
+      }
+    }
+
+    function onEdgeMouseup(edge, e) {
     }
 
     function onDblClick(e) {

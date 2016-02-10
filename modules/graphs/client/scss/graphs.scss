@@ -21,4 +21,24 @@
       stroke: #00007F;
     }
   }
+
+  .edge {
+    &.selected {
+      stroke: #00007F;
+    }    
+  }
+
+  .handle {
+    &.selected {
+      fill: #00007F;
+    }    
+  }
+
+  .label {
+    dominant-baseline: hanging;
+
+    &.selected {
+      fill: #00007F;
+    }
+  }
 }

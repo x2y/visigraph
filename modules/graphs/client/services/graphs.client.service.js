@@ -291,8 +291,8 @@
     this.from = opt_data.from || null;
     this.to = opt_data.to || null;
     this.isLinear = opt_data.isLinear || true;
-    this.handleX = opt_data.handleX || 0;
-    this.handleY = opt_data.handleY || 0;
+    this.handleX = opt_data.handleX || (this.from.x + this.to.x) / 2;
+    this.handleY = opt_data.handleY || (this.from.y + this.to.y) / 2;
     this.label = opt_data.label || '';
     this.radius = opt_data.radius || 10;
     this.color = opt_data.color || '#444';

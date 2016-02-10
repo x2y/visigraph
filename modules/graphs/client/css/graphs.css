@@ -13,5 +13,13 @@
     .viewport .vertex.selected {
       fill: #9494CE;
       stroke: #00007F; }
+  .viewport .edge.selected {
+    stroke: #00007F; }
+  .viewport .handle.selected {
+    fill: #00007F; }
+  .viewport .label {
+    dominant-baseline: hanging; }
+    .viewport .label.selected {
+      fill: #00007F; }
 
 /*# sourceMappingURL=graphs.css.map */
