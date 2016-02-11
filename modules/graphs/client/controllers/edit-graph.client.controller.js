@@ -13,10 +13,10 @@
 
   var Tool = {
     CURSOR: 'cursor',
-    ADD_ELEMENT: 'add_element',
-    ADD_CAPTION: 'add_caption',
-    SCISSORS: 'scissors',
-    PAINTBRUSH: 'paintbrush',
+    GRAPH: 'graph',
+    CAPTION: 'caption',
+    CUT: 'cut',
+    PAINT: 'paint',
   };
 
 
@@ -62,7 +62,7 @@
       switch (vm.tool) {
         case Tool.CURSOR:
           break;
-        case Tool.ADD_ELEMENT:
+        case Tool.GRAPH:
           var vertex = vm.graph.addVertex({
             x: svgPoint.x,
             y: svgPoint.y,
@@ -77,11 +77,11 @@
             selectedVertices[i].isSelected = false;
           }
           break;
-        case Tool.ADD_CAPTION:
+        case Tool.CAPTION:
           break;
-        case Tool.SCISSORS:
+        case Tool.CUT:
           break;
-        case Tool.PAINTBRUSH:
+        case Tool.PAINT:
           break;
       }
     }
@@ -164,13 +164,13 @@
           vertex.isSelected = true;
           e.stopPropagation();
           break;
-        case Tool.ADD_ELEMENT:
+        case Tool.GRAPH:
           if (!vm.graph.hasSelectedVertices()) {
             vertex.isSelected = true;
             e.stopPropagation();
           }
           break;
-        case Tool.SCISSORS:
+        case Tool.CUT:
           vm.graph.removeVertex(vertex);
           e.stopPropagation();
           break;
@@ -179,7 +179,7 @@
 
     function onVertexMouseup(vertex, e) {
       switch (vm.tool) {
-        case Tool.ADD_ELEMENT:
+        case Tool.GRAPH:
           var selectedVertices = vm.graph.getSelectedVertices();
           if (selectedVertices.length === 1 && selectedVertices[0] === vertex) {
             // Do nothing.
@@ -204,6 +204,10 @@
             vm.graph.selectAll(false);
           }
           edge.isSelected = true;
+          e.stopPropagation();
+          break;
+        case Tool.CUT:
+          vm.graph.removeEdge(edge);
           e.stopPropagation();
           break;
       }
