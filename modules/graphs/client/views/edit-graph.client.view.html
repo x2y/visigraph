@@ -3,10 +3,12 @@
     <h1>{{vm.graph.name}}</h1>
   </div>
   <div class="col-md-12">
-    <svg class="viewport" ng-dblclick="vm.onDblClick($event)"
+    <svg class="viewport" tabindex="0"
+        ng-dblclick="vm.onDblClick($event)"
         msd-wheel="vm.onWheel($event, $delta, $deltaX, $deltaY)"
         ng-mousedown="vm.onViewportMousedown($event)"
-        ng-mouseup="vm.onViewportMouseup($event)">
+        ng-mouseup="vm.onViewportMouseup($event)"
+        ng-keydown="vm.onViewportKeydown($event)">
       <g ng-attr-transform="{{vm.transform | svgMatrix}}">
         <!-- Edges -->
         <line ng-repeat="(id, edge) in vm.graph.edges"

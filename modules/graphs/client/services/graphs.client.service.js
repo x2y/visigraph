@@ -56,11 +56,13 @@
     Resource.prototype.addEdge = addEdge;
     Resource.prototype.removeEdge = removeEdge;
     Resource.prototype.selectAll = selectAll;
-    Resource.prototype.deselectAll = deselectAll;
     Resource.prototype.hasSelectedVertices = hasSelectedVertices;
     Resource.prototype.getSelectedVertices = getSelectedVertices;
     Resource.prototype.hasSelectedEdges = hasSelectedEdges;
     Resource.prototype.getSelectedEdges = getSelectedEdges;
+    Resource.prototype.hasSelectedCaptions = hasSelectedCaptions;
+    Resource.prototype.getSelectedCaptions = getSelectedCaptions;
+    Resource.prototype.translateElements = translateElements;
 
     Resource.Vertex = Vertex;
     Resource.Edge = Edge;
@@ -193,66 +195,129 @@
       return edge;
     }
 
-    function selectAll() {
+    function addCaption(caption) {
+      /* jshint validthis: true */
+      if (!(caption instanceof Caption)) {
+        caption = new Caption(caption);
+      }
+      if (caption.id in this.captions) {
+        return;
+      }
+
+      this.captions[caption.id] = caption;
+      return caption;
+    }
+
+    function removeCaption(caption) {
+      /* jshint validthis: true */
+      if (!(caption instanceof Caption)) {
+        caption = this.captions[caption];
+      }
+      
+      delete this.captions[caption.id];
+      return caption;
+    }
+
+    function selectAll(select) {
       /* jshint validthis: true */
       for (var vertexId in this.vertices) {
-        this.vertices[vertexId].isSelected = true;
+        this.vertices[vertexId].isSelected = select;
       }
       for (var edgeId in this.edges) {
-        this.edges[edgeId].isSelected = true;
+        this.edges[edgeId].isSelected = select;
+      }
+      for (var captionId in this.captions) {
+        this.captions[captionId].isSelected = select;
       }
     }
 
-    function deselectAll() {
-      /* jshint validthis: true */
-      for (var vertexId in this.vertices) {
-        this.vertices[vertexId].isSelected = false;
-      }
-      for (var edgeId in this.edges) {
-        this.edges[edgeId].isSelected = false;
-      }
-    }
-
-    function hasSelectedVertices() {
-      /* jshint validthis: true */
-      for (var id in this.vertices) {
-        if (this.vertices[id].isSelected) {
+    function hasSelectedElements(map) {
+      for (var id in map) {
+        if (map[id].isSelected) {
           return true;
         }
       }
       return false;
     }
 
-    function getSelectedVertices() {
-      /* jshint validthis: true */
+    function getSelectedElements(map) {
       var selected = [];
-      for (var id in this.vertices) {
-        if (this.vertices[id].isSelected) {
-          selected.push(this.vertices[id]);
+      for (var id in map) {
+        if (map[id].isSelected) {
+          selected.push(map[id]);
         }
       }
       return selected;
     }
 
-    function hasSelectedEdges() {
+    function hasSelectedVertices(map) {
       /* jshint validthis: true */
-      for (var id in this.edges) {
-        if (this.edges[id].isSelected) {
-          return true;
-        }
-      }
-      return false;
+      return hasSelectedElements(this.vertices);
     }
 
-    function getSelectedEdges() {
+    function getSelectedVertices(map) {
       /* jshint validthis: true */
-      var selected = [];
-      for (var id in this.edges) {
-        if (this.edges[id].isSelected) {
-          selected.push(this.edges[id]);
+      return getSelectedElements(this.vertices);
+    }
+
+    function hasSelectedEdges(map) {
+      /* jshint validthis: true */
+      return hasSelectedElements(this.edges);
+    }
+
+    function getSelectedEdges(map) {
+      /* jshint validthis: true */
+      return getSelectedElements(this.edges);
+    }
+
+    function hasSelectedCaptions(map) {
+      /* jshint validthis: true */
+      return hasSelectedElements(this.captions);
+    }
+
+    function getSelectedCaptions(map) {
+      /* jshint validthis: true */
+      return getSelectedElements(this.captions);
+    }
+
+    function translateElements(x, y, opt_vertices, opt_edges, opt_captions) {
+      /* jshint validthis: true */
+      if (opt_vertices == null && opt_edges == null && opt_captions == null) {
+        opt_vertices = this.getSelectedVertices();
+        opt_edges = this.getSelectedEdges();
+        opt_captions = this.getSelectedCaptions();
+      }
+
+      // Translate the specified vertices.
+      var incidentUntranslatedEdges = {};
+      for (var vertexIndex = 0; vertexIndex < opt_vertices.length; ++vertexIndex) {
+        var vertex = opt_vertices[vertexIndex];
+        vertex.x += x;
+        vertex.y += y;
+        for (var edgeId in vertex.edges) {
+          incidentUntranslatedEdges[edgeId] = vertex.edges[edgeId];
         }
       }
-      return selected;
+
+      // Translate the specified edges.
+      for (var edgeIndex = 0; edgeIndex < opt_edges.length; ++edgeIndex) {
+        var edge = opt_edges[edgeIndex];
+        edge.handleX += x;
+        edge.handleY += y;
+        delete incidentUntranslatedEdges[edge.id];
+      }
+
+      // Fix the edges altered by previous vertex translations, but not themselves translated.
+      for (var edgeId in incidentUntranslatedEdges) {
+        incidentUntranslatedEdges[edgeId].fix();
+      }
+
+      // Translate the specified captions.
+      for (var captionIndex = 0; captionIndex < opt_captions.length; ++captionIndex) {
+        var caption = opt_captions[captionIndex];
+        caption.x += x;
+        caption.y += y;
+      }
     }
   }
 
@@ -291,15 +356,21 @@
     this.from = opt_data.from || null;
     this.to = opt_data.to || null;
     this.isLinear = opt_data.isLinear || true;
-    this.handleX = opt_data.handleX || (this.from.x + this.to.x) / 2;
-    this.handleY = opt_data.handleY || (this.from.y + this.to.y) / 2;
+    this.handleX = opt_data.handleX || 0;
+    this.handleY = opt_data.handleY || 0;
     this.label = opt_data.label || '';
     this.radius = opt_data.radius || 10;
     this.color = opt_data.color || '#444';
     this.isSelected = opt_data.isSelected || false;
     this.weight = opt_data.weight || 1;
     this.thickness = opt_data.thickness || 1.5;
+    this.fix();
   }
+
+  Edge.prototype.fix = function() {
+    this.handleX = (this.from.x + this.to.x) / 2;
+    this.handleY = (this.from.y + this.to.y) / 2;
+  };
 
   Edge.prototype.toSerializable = function () {
     return {

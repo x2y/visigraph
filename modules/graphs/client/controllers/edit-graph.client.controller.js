@@ -29,11 +29,12 @@
     vm.transform = [[1, 0, 0],
                     [0, 1, 0],
                     [0, 0, 1]];
-    vm.tool = Tool.ADD_ELEMENT;
+    vm.tool = Tool.CURSOR;
 
     vm.authentication = Authentication;
     vm.onViewportMousedown = onViewportMousedown;
     vm.onViewportMouseup = onViewportMouseup;
+    vm.onViewportKeydown = onViewportKeydown;
     vm.onVertexMousedown = onVertexMousedown;
     vm.onVertexMouseup = onVertexMouseup;
     vm.onEdgeMousedown = onEdgeMousedown;
@@ -49,7 +50,7 @@
       switch (vm.tool) {
         case Tool.CURSOR:
           if (!e.shiftKey) {
-            vm.graph.deselectAll();
+            vm.graph.selectAll(false);
           }
           break;
       }
@@ -85,11 +86,80 @@
       }
     }
 
+    function onViewportKeydown(e) {
+      switch (e.code) {
+        case 'ArrowUp':
+        case 'ArrowRight':
+        case 'ArrowDown':
+        case 'ArrowLeft':
+          var increment = 10;
+          if (e.shiftKey) {
+            increment *= 10;
+          }
+          if (e.altKey) {
+            increment /= 10;
+          }
+          if (e.ctrlKey) {
+            switch (e.code) {
+              case 'ArrowUp':
+                translate(vm.transform, 0, increment);
+                break;
+              case 'ArrowRight':
+                translate(vm.transform, -increment, 0);
+                break;
+              case 'ArrowDown':
+                translate(vm.transform, 0, -increment);
+                break;
+              case 'ArrowLeft':
+                translate(vm.transform, increment, 0);
+                break;
+            }
+          } else {
+            switch (e.code) {
+              case 'ArrowUp':
+                vm.graph.translateElements(0, -increment);
+                break;
+              case 'ArrowRight':
+                vm.graph.translateElements(increment, 0);
+                break;
+              case 'ArrowDown':
+                vm.graph.translateElements(0, increment);
+                break;
+              case 'ArrowLeft':
+                vm.graph.translateElements(-increment, 0);
+                break;
+            }
+          }
+          e.preventDefault();
+          break;
+        case 'Backspace':
+        case 'Delete':
+          var selectedVertices = vm.graph.getSelectedVertices();
+          while (selectedVertices.length > 0) {
+            vm.graph.removeVertex(selectedVertices.pop());
+          }
+          var selectedEdges = vm.graph.getSelectedEdges();
+          while (selectedEdges.length > 0) {
+            vm.graph.removeEdge(selectedEdges.pop());
+          }
+          var selectedCaptions = vm.graph.getSelectedCaptions();
+          while (selectedCaptions.length > 0) {
+            vm.graph.removeCaption(selectedCaptions.pop());
+          }
+          e.preventDefault();
+          break;
+        case 'Escape':
+          vm.graph.selectAll(false);
+          e.preventDefault();
+          break;
+      }
+    }
+
     function onVertexMousedown(vertex, e) {
       switch (vm.tool) {
         case Tool.CURSOR:
           if (!e.shiftKey) {
-            vm.graph.deselectAll();
+            vm.graph.selectAll(false);
           }
           vertex.isSelected = true;
           e.stopPropagation();
@@ -131,7 +201,7 @@
       switch (vm.tool) {
         case Tool.CURSOR:
           if (!e.shiftKey) {
-            vm.graph.deselectAll();
+            vm.graph.selectAll(false);
           }
           edge.isSelected = true;
           e.stopPropagation();
