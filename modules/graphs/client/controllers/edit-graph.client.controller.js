@@ -33,6 +33,7 @@
 
     vm.authentication = Authentication;
     vm.onViewportMousedown = onViewportMousedown;
+    vm.onViewportMousemove = onViewportMousemove;
     vm.onViewportMouseup = onViewportMouseup;
     vm.onViewportKeydown = onViewportKeydown;
     vm.onVertexMousedown = onVertexMousedown;
@@ -47,6 +48,9 @@
 
 
     function onViewportMousedown(e) {
+      if (e.which !== 1) {
+        return;
+      }
       switch (vm.tool) {
         case Tool.CURSOR:
           if (!e.shiftKey) {
@@ -56,7 +60,23 @@
       }
     }
 
+    function onViewportMousemove(e) {
+      if (e.which !== 1) {
+        return;
+      }
+      switch (vm.tool) {
+        case Tool.CURSOR:
+          var scale = vm.transform[0][0];
+          vm.graph.translateElements(e.movementX / scale, e.movementY / scale);
+          break;
+      }
+    }
+
     function onViewportMouseup(e) {
+      if (e.which !== 1) {
+        return;
+      }
+
       var mousePoint = { x: e.offsetX, y: e.offsetY };
       var svgPoint = invertPoint(vm.transform, mousePoint.x, mousePoint.y);
       switch (vm.tool) {
@@ -156,6 +176,9 @@
     }
 
     function onVertexMousedown(vertex, e) {
+      if (e.which !== 1) {
+        return;
+      }
       switch (vm.tool) {
         case Tool.CURSOR:
           if (!e.shiftKey) {
@@ -178,6 +201,9 @@
     }
 
     function onVertexMouseup(vertex, e) {
+      if (e.which !== 1) {
+        return;
+      }
       switch (vm.tool) {
         case Tool.GRAPH:
           var selectedVertices = vm.graph.getSelectedVertices();
@@ -198,6 +224,9 @@
     }
 
     function onEdgeMousedown(edge, e) {
+      if (e.which !== 1) {
+        return;
+      }
       switch (vm.tool) {
         case Tool.CURSOR:
           if (!e.shiftKey) {
@@ -214,6 +243,15 @@
     }
 
     function onEdgeMouseup(edge, e) {
+      if (e.which !== 1) {
+        return;
+      }
+      switch (vm.tool) {
+        case Tool.CURSOR:
+          // TODO
+          e.stopPropagation();
+          break;
+      }
     }
 
     function onDblClick(e) {
