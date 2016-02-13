@@ -23,6 +23,8 @@
   }
 
   .edge {
+    fill: none;
+    
     &.selected {
       stroke: #00007F;
     }    

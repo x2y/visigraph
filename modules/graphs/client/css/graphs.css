@@ -13,8 +13,10 @@
     .viewport .vertex.selected {
       fill: #9494CE;
       stroke: #00007F; }
-  .viewport .edge.selected {
-    stroke: #00007F; }
+  .viewport .edge {
+    fill: none; }
+    .viewport .edge.selected {
+      stroke: #00007F; }
   .viewport .handle.selected {
     fill: #00007F; }
   .viewport .label {
