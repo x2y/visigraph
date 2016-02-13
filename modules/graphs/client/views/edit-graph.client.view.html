@@ -17,6 +17,14 @@
             ng-attr-stroke="{{edge.color}}"
             ng-attr-stroke-width="{{edge.thickness}}"
             ng-attr-x1="{{edge.from.x}}" ng-attr-y1="{{edge.from.y}}"
+            ng-attr-x2="{{edge.handleX}}"   ng-attr-y2="{{edge.handleY}}">
+          <title ng-if="edge.label">{{edge.label}}</title>
+        </line>
+        <line ng-repeat="(id, edge) in vm.graph.edges"
+            ng-attr-class="{{'edge' + (edge.isSelected ? ' selected' : '')}}"
+            ng-attr-stroke="{{edge.color}}"
+            ng-attr-stroke-width="{{edge.thickness}}"
+            ng-attr-x1="{{edge.handleX}}" ng-attr-y1="{{edge.handleY}}"
             ng-attr-x2="{{edge.to.x}}"   ng-attr-y2="{{edge.to.y}}">
           <title ng-if="edge.label">{{edge.label}}</title>
         </line>
