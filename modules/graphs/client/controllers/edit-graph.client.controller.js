@@ -35,12 +35,12 @@
     vm.onViewportMousedown = onViewportMousedown;
     vm.onViewportMousemove = onViewportMousemove;
     vm.onViewportMouseup = onViewportMouseup;
+    vm.onViewportDblClick = onViewportDblClick;
     vm.onViewportKeydown = onViewportKeydown;
     vm.onVertexMousedown = onVertexMousedown;
     vm.onVertexMouseup = onVertexMouseup;
     vm.onEdgeMousedown = onEdgeMousedown;
     vm.onEdgeMouseup = onEdgeMouseup;
-    vm.onDblClick = onDblClick;
     vm.onWheel = onWheel;
     vm.save = save;
 
@@ -51,6 +51,8 @@
       if (e.which !== 1) {
         return;
       }
+
+      e.preventDefault();
       switch (vm.tool) {
         case Tool.CURSOR:
           if (!e.shiftKey) {
@@ -104,6 +106,27 @@
         case Tool.PAINT:
           break;
       }
+    }
+
+    function onViewportDblClick(e) {
+      var viewportEl = e.target.closest('.viewport');
+      var mousePoint = { x: e.offsetX, y: e.offsetY };
+      panEndPoint = invertPoint(vm.transform, mousePoint.x, mousePoint.y);
+      
+      $interval.cancel(panInterval);
+      panInterval = $interval(function() {
+        var panStartPoint = invertPoint(vm.transform, viewportEl.offsetWidth / 2,
+            viewportEl.offsetHeight / 2);
+        var scale = vm.transform[0][0];
+        var xDelta = (panEndPoint.x - panStartPoint.x) * PAN_SPEED_FACTOR;
+        var yDelta = (panEndPoint.y - panStartPoint.y) * PAN_SPEED_FACTOR;
+
+        if (Math.abs(xDelta) < 0.1 && Math.abs(yDelta) < 0.1) {
+          $interval.cancel(panInterval);
+        } else {
+          translate(vm.transform, -xDelta * scale, -yDelta * scale);
+        }
+      }, 30);
     }
 
     function onViewportKeydown(e) {
@@ -179,9 +202,11 @@
       if (e.which !== 1) {
         return;
       }
+
+      e.preventDefault();
       switch (vm.tool) {
         case Tool.CURSOR:
-          if (!e.shiftKey) {
+          if (!vertex.isSelected && !e.shiftKey) {
             vm.graph.selectAll(false);
           }
           vertex.isSelected = true;
@@ -227,9 +252,11 @@
       if (e.which !== 1) {
         return;
       }
+
+      e.preventDefault();
       switch (vm.tool) {
         case Tool.CURSOR:
-          if (!e.shiftKey) {
+          if (!edge.isSelected && !e.shiftKey) {
             vm.graph.selectAll(false);
           }
           edge.isSelected = true;
@@ -252,27 +279,6 @@
           e.stopPropagation();
           break;
       }
-    }
-
-    function onDblClick(e) {
-      var viewportEl = e.target.closest('.viewport');
-      var mousePoint = { x: e.offsetX, y: e.offsetY };
-      panEndPoint = invertPoint(vm.transform, mousePoint.x, mousePoint.y);
-      
-      $interval.cancel(panInterval);
-      panInterval = $interval(function() {
-        var panStartPoint = invertPoint(vm.transform, viewportEl.offsetWidth / 2,
-            viewportEl.offsetHeight / 2);
-        var scale = vm.transform[0][0];
-        var xDelta = (panEndPoint.x - panStartPoint.x) * PAN_SPEED_FACTOR;
-        var yDelta = (panEndPoint.y - panStartPoint.y) * PAN_SPEED_FACTOR;
-
-        if (Math.abs(xDelta) < 0.1 && Math.abs(yDelta) < 0.1) {
-          $interval.cancel(panInterval);
-        } else {
-          translate(vm.transform, -xDelta * scale, -yDelta * scale);
-        }
-      }, 30);
     }
 
     function onWheel(e, delta, deltaX, deltaY) {

@@ -4,11 +4,11 @@
   </div>
   <div class="col-md-12">
     <svg class="viewport" tabindex="0"
-        ng-dblclick="vm.onDblClick($event)"
         msd-wheel="vm.onWheel($event, $delta, $deltaX, $deltaY)"
         ng-mousedown="vm.onViewportMousedown($event)"
         ng-mousemove="vm.onViewportMousemove($event)"
         ng-mouseup="vm.onViewportMouseup($event)"
+        ng-dblclick="vm.onViewportDblClick($event)"
         ng-keydown="vm.onViewportKeydown($event)">
       <g ng-attr-transform="{{vm.transform | svgMatrix}}">
         <!-- Edges -->
