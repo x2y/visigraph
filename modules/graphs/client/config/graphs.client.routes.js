@@ -3,11 +3,15 @@
 
   angular
     .module('graphs.routes')
-    .config(routeConfig);
+    .config(config);
 
-  routeConfig.$inject = ['$stateProvider'];
+  config.$inject = ['$stateProvider', '$animateProvider'];
 
-  function routeConfig($stateProvider) {
+  function config($stateProvider, $animateProvider) {
+    // Make animations opt-in rather than opt-out for performance reasons.
+    $animateProvider.classNameFilter(/ng-animate/);
+
+    // Set up graph-related routes/states.
     $stateProvider
       .state('graphs', {
         abstract: true,
