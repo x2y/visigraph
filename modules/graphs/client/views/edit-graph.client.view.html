@@ -12,7 +12,7 @@
         ng-keydown="vm.onViewportKeydown($event)">
       <g ng-attr-transform="{{vm.transform | svgMatrix}}">
         <!-- Edges -->
-        <g ng-repeat="(id, edge) in vm.graph.edges"
+        <g ng-repeat="(id, edge) in vm.graph.edges track by id"
             ng-attr-class="{{'edge' + (edge.isSelected ? ' selected' : '')}}">
           <path ng-attr-stroke="{{edge.color}}" ng-attr-stroke-width="{{edge.thickness}}"
               ng-attr-d="M{{edge.from.x}},{{edge.from.y}}
@@ -32,7 +32,7 @@
           </text>
         </g>
         <!-- Vertices -->
-        <g ng-repeat="(id, vertex) in vm.graph.vertices"
+        <g ng-repeat="(id, vertex) in vm.graph.vertices track by id"
             ng-attr-class="{{'vertex' + (vertex.isSelected ? ' selected' : '')}}">
           <circle ng-attr-r="{{vertex.radius}}" ng-attr-fill="{{vertex.color}}"
               ng-attr-cx="{{vertex.x}}" ng-attr-cy="{{vertex.y}}"
@@ -47,7 +47,7 @@
           </text>
         </g>
         <!-- Captions -->
-        <g ng-repeat="(id, caption) in vm.graph.captions"
+        <g ng-repeat="(id, caption) in vm.graph.captions track by id"
             ng-attr-class="{{'caption' + (caption.isSelected ? ' selected' : '')}}">
           <text ng-attr-font-size="{{caption.fontSize}}"
               ng-attr-x="{{caption.x + 4.5}}" ng-attr-y="{{caption.y + 3}}">
