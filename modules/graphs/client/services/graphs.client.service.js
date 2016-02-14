@@ -87,13 +87,13 @@
       delete resourceData.vertices;  // Prevent circular references.
 
       var edges = {};
-      for (id in resourceData.edges) {
+      for (var id in resourceData.edges) {
         edges[id] = resourceData.edges[id].toSerializable();
       }
       delete resourceData.edges;  // Prevent circular references.
 
       var captions = {};
-      for (id in resourceData.captions) {
+      for (var id in resourceData.captions) {
         captions[id] = resourceData.captions[id].toSerializable();
       }
 
@@ -121,18 +121,18 @@
       resourceData.allowCycles = data.allowCycles;
 
       resourceData.vertices = {};
-      for (var vertexId in data.vertices) {
-        addVertex.call(resourceData, data.vertices[vertexId]);
+      for (var id in data.vertices) {
+        addVertex.call(resourceData, data.vertices[id]);
       }
 
       resourceData.edges = {};
-      for (var edgeId in data.edges) {
-        addEdge.call(resourceData, data.edges[edgeId]);
+      for (var id in data.edges) {
+        addEdge.call(resourceData, data.edges[id]);
       }
 
       resourceData.captions = {};
-      for (var captionId in data.captions) {
-        addCaption.call(resourceData, data.captions[captionId]);
+      for (var id in data.captions) {
+        addCaption.call(resourceData, data.captions[id]);
       }
 
       return resourceData;
@@ -169,8 +169,8 @@
         vertex = this.vertices[vertex];
       }
       
-      for (var edgeId in vertex.edges) {
-        this.removeEdge(edgeId);
+      for (var id in vertex.edges) {
+        this.removeEdge(id);
       }
       delete this.vertices[vertex.id];
       return vertex;
@@ -234,14 +234,14 @@
 
     function selectAll(select) {
       /* jshint validthis: true */
-      for (var vertexId in this.vertices) {
-        this.vertices[vertexId].isSelected = select;
+      for (var id in this.vertices) {
+        this.vertices[id].isSelected = select;
       }
-      for (var edgeId in this.edges) {
-        this.edges[edgeId].isSelected = select;
+      for (var id in this.edges) {
+        this.edges[id].isSelected = select;
       }
-      for (var captionId in this.captions) {
-        this.captions[captionId].isSelected = select;
+      for (var id in this.captions) {
+        this.captions[id].isSelected = select;
       }
     }
 
@@ -304,31 +304,31 @@
 
       // Translate the specified vertices.
       var incidentUntranslatedEdges = {};
-      for (var vertexIndex = 0; vertexIndex < opt_vertices.length; ++vertexIndex) {
-        var vertex = opt_vertices[vertexIndex];
+      for (var i = 0; i < opt_vertices.length; ++i) {
+        var vertex = opt_vertices[i];
         vertex.x += x;
         vertex.y += y;
-        for (var edgeId in vertex.edges) {
-          incidentUntranslatedEdges[edgeId] = vertex.edges[edgeId];
+        for (var id in vertex.edges) {
+          incidentUntranslatedEdges[id] = vertex.edges[id];
         }
       }
 
       // Translate the specified edges.
-      for (var edgeIndex = 0; edgeIndex < opt_edges.length; ++edgeIndex) {
-        var edge = opt_edges[edgeIndex];
+      for (var i = 0; i < opt_edges.length; ++i) {
+        var edge = opt_edges[i];
         edge.handleX += x;
         edge.handleY += y;
         delete incidentUntranslatedEdges[edge.id];
       }
 
       // Fix the edges altered by previous vertex translations, but not themselves translated.
-      for (var edgeId in incidentUntranslatedEdges) {
-        incidentUntranslatedEdges[edgeId].fix();
+      for (var id in incidentUntranslatedEdges) {
+        incidentUntranslatedEdges[id].fix();
       }
 
       // Translate the specified captions.
-      for (var captionIndex = 0; captionIndex < opt_captions.length; ++captionIndex) {
-        var caption = opt_captions[captionIndex];
+      for (var i = 0; i < opt_captions.length; ++i) {
+        var caption = opt_captions[i];
         caption.x += x;
         caption.y += y;
       }

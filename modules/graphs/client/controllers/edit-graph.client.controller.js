@@ -33,7 +33,7 @@
     vm.isSelectionVisible = false;
     vm.selectionStartPoint = { x: 0, y: 0 };
     vm.selectionEndPoint = { x: 10, y: 10 };
-    vm.paintColor = "#f00";
+    vm.paintColor = '#f00';
 
     vm.authentication = Authentication;
     vm.onViewportMousedown = onViewportMousedown;
@@ -113,8 +113,8 @@
                                                    vm.selectionStartPoint.y);
           var svgSelectionEndPoint = svgPoint;
 
-          for (var vertexId in vm.graph.vertices) {
-            var vertex = vm.graph.vertices[vertexId];
+          for (var id in vm.graph.vertices) {
+            var vertex = vm.graph.vertices[id];
             if (isPointInRect(vertex.x, vertex.y, svgSelectionStartPoint, svgSelectionEndPoint)) {
               switch (vm.tool) {
                 case Tool.CURSOR:
@@ -129,8 +129,8 @@
               }
             }
           }
-          for (var edgeId in vm.graph.edges) {
-            var edge = vm.graph.edges[edgeId];
+          for (var id in vm.graph.edges) {
+            var edge = vm.graph.edges[id];
             if (isPointInRect(edge.handleX, edge.handleY, svgSelectionStartPoint,
                               svgSelectionEndPoint)) {
               switch (vm.tool) {
@@ -146,8 +146,8 @@
               }
             }
           }
-          for (var captionId in vm.graph.captions) {
-            var caption = vm.graph.captions[captionId];
+          for (var id in vm.graph.captions) {
+            var caption = vm.graph.captions[id];
             if (isPointInRect(caption.x, caption.y, svgSelectionStartPoint, svgSelectionEndPoint)) {
               switch (vm.tool) {
                 case Tool.CURSOR:

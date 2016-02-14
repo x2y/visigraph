@@ -24,5 +24,6 @@
     "browser",
     "element"
   ],
-  "devel": true // Allow development statements e.g. `console.log();`.
+  "devel": true, // Allow development statements e.g. `console.log();`.
+  "shadow": true // Allow variable shadowing (allowing for the redefinition of a variable, such as `i` in a for loop).
 }
