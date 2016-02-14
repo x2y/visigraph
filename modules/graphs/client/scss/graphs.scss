@@ -24,23 +24,43 @@
 
   .edge {
     fill: none;
-    
+
     &.selected {
       stroke: #00007F;
     }    
   }
 
   .handle {
+    r: 2.625;
+
     &.selected {
       fill: #00007F;
     }    
   }
 
-  .label {
+  .caption {
     dominant-baseline: hanging;
 
     &.selected {
       fill: #00007F;
     }
+  }
+
+  .vertex-label,
+  .edge-label,
+  .caption-label {
+    dominant-baseline: hanging;
+    fill: #444;
+
+    &.selected {
+      fill: #00007F;
+    }
+  }
+
+  .selection {
+    fill: rgba(150, 150, 255, .4);
+    stroke-linejoin: miter;
+    stroke-width: 1;
+    stroke: #00007F;
   }
 }

@@ -55,6 +55,8 @@
     Resource.prototype.removeVertex = removeVertex;
     Resource.prototype.addEdge = addEdge;
     Resource.prototype.removeEdge = removeEdge;
+    Resource.prototype.addCaption = addCaption;
+    Resource.prototype.removeCaption = removeCaption;
     Resource.prototype.selectAll = selectAll;
     Resource.prototype.hasSelectedVertices = hasSelectedVertices;
     Resource.prototype.getSelectedVertices = getSelectedVertices;
@@ -66,6 +68,7 @@
 
     Resource.Vertex = Vertex;
     Resource.Edge = Edge;
+    Resource.Caption = Caption;
 
     return Resource;
 
@@ -89,6 +92,11 @@
       }
       delete resourceData.edges;  // Prevent circular references.
 
+      var captions = {};
+      for (id in resourceData.captions) {
+        captions[id] = resourceData.captions[id].toSerializable();
+      }
+
       resourceData.data = angular.toJson({
         version: resourceData.version,
         allowLoops: resourceData.allowLoops,
@@ -97,6 +105,7 @@
         allowCycles: resourceData.allowCycles,
         vertices: vertices,
         edges: edges,
+        captions: captions,
       });
       return resourceData;
     }
@@ -119,6 +128,11 @@
       resourceData.edges = {};
       for (var edgeId in data.edges) {
         addEdge.call(resourceData, data.edges[edgeId]);
+      }
+
+      resourceData.captions = {};
+      for (var captionId in data.captions) {
+        addCaption.call(resourceData, data.captions[captionId]);
       }
 
       return resourceData;
@@ -387,6 +401,30 @@
       isSelected: this.isSelected,
       weight:     this.weight,
       thickness:  this.thickness,
+    };
+  };
+
+
+  function Caption(opt_data) {
+    opt_data = opt_data || {};
+    this.id = opt_data.id || generateRandomId();
+    this.x = opt_data.x || 0;
+    this.y = opt_data.y || 0;
+    this.label = opt_data.label || '';
+    this.fontSize = opt_data.fontSize || 14;
+    this.color = opt_data.color || '#444';
+    this.isSelected = opt_data.isSelected || false;
+  }
+
+  Caption.prototype.toSerializable = function () {
+    return {
+      id:         this.id,
+      x:          this.x,
+      y:          this.y,
+      label:      this.label,
+      fontSize:   this.fontSize,
+      color:      this.color,
+      isSelected: this.isSelected,
     };
   };
 

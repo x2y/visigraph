@@ -30,6 +30,10 @@
                     [0, 1, 0],
                     [0, 0, 1]];
     vm.tool = Tool.CURSOR;
+    vm.isSelectionVisible = false;
+    vm.selectionStartPoint = { x: 0, y: 0 };
+    vm.selectionEndPoint = { x: 10, y: 10 };
+    vm.paintColor = "#f00";
 
     vm.authentication = Authentication;
     vm.onViewportMousedown = onViewportMousedown;
@@ -41,6 +45,8 @@
     vm.onVertexMouseup = onVertexMouseup;
     vm.onEdgeMousedown = onEdgeMousedown;
     vm.onEdgeMouseup = onEdgeMouseup;
+    vm.onCaptionMousedown = onCaptionMousedown;
+    vm.onCaptionMouseup = onCaptionMouseup;
     vm.onWheel = onWheel;
     vm.save = save;
 
@@ -48,6 +54,7 @@
 
 
     function onViewportMousedown(e) {
+      e.target.focus();
       if (e.which !== 1) {
         return;
       }
@@ -55,9 +62,13 @@
       e.preventDefault();
       switch (vm.tool) {
         case Tool.CURSOR:
+        case Tool.CUT:
+        case Tool.PAINT:
           if (!e.shiftKey) {
             vm.graph.selectAll(false);
           }
+          vm.isSelectionVisible = true;
+          vm.selectionEndPoint = vm.selectionStartPoint = { x: e.offsetX, y: e.offsetY };
           break;
       }
     }
@@ -68,8 +79,18 @@
       }
       switch (vm.tool) {
         case Tool.CURSOR:
-          var scale = vm.transform[0][0];
-          vm.graph.translateElements(e.movementX / scale, e.movementY / scale);
+          if (vm.graph.hasSelectedVertices() || vm.graph.hasSelectedEdges() ||
+              vm.graph.hasSelectedCaptions()) {
+            var scale = vm.transform[0][0];
+            vm.graph.translateElements(e.movementX / scale, e.movementY / scale);
+            vm.selectionEndPoint = { x: e.offsetX, y: e.offsetY };
+          } else {
+            vm.selectionEndPoint = { x: e.offsetX, y: e.offsetY };
+          }  
+          break;
+        case Tool.CUT:
+        case Tool.PAINT:
+          vm.selectionEndPoint = { x: e.offsetX, y: e.offsetY };
           break;
       }
     }
@@ -83,6 +104,66 @@
       var svgPoint = invertPoint(vm.transform, mousePoint.x, mousePoint.y);
       switch (vm.tool) {
         case Tool.CURSOR:
+        case Tool.CUT:
+        case Tool.PAINT:
+          if (!vm.isSelectionVisible) {
+            break;
+          }
+          var svgSelectionStartPoint = invertPoint(vm.transform, vm.selectionStartPoint.x,
+                                                   vm.selectionStartPoint.y);
+          var svgSelectionEndPoint = svgPoint;
+
+          for (var vertexId in vm.graph.vertices) {
+            var vertex = vm.graph.vertices[vertexId];
+            if (isPointInRect(vertex.x, vertex.y, svgSelectionStartPoint, svgSelectionEndPoint)) {
+              switch (vm.tool) {
+                case Tool.CURSOR:
+                  vertex.isSelected = true;
+                  break;
+                case Tool.CUT:
+                  vm.graph.removeVertex(vertex);
+                  break;
+                case Tool.PAINT:
+                  vertex.color = vm.paintColor;
+                  break;
+              }
+            }
+          }
+          for (var edgeId in vm.graph.edges) {
+            var edge = vm.graph.edges[edgeId];
+            if (isPointInRect(edge.handleX, edge.handleY, svgSelectionStartPoint,
+                              svgSelectionEndPoint)) {
+              switch (vm.tool) {
+                case Tool.CURSOR:
+                  edge.isSelected = true;
+                  break;
+                case Tool.CUT:
+                  vm.graph.removeEdge(edge);
+                  break;
+                case Tool.PAINT:
+                  edge.color = vm.paintColor;
+                  break;
+              }
+            }
+          }
+          for (var captionId in vm.graph.captions) {
+            var caption = vm.graph.captions[captionId];
+            if (isPointInRect(caption.x, caption.y, svgSelectionStartPoint, svgSelectionEndPoint)) {
+              switch (vm.tool) {
+                case Tool.CURSOR:
+                  caption.isSelected = true;
+                  break;
+                case Tool.CUT:
+                  vm.graph.removeCaption(caption);
+                  break;
+                case Tool.PAINT:
+                  caption.color = vm.paintColor;
+                  break;
+              }
+            }
+          }
+
+          vm.isSelectionVisible = false;
           break;
         case Tool.GRAPH:
           var vertex = vm.graph.addVertex({
@@ -100,10 +181,11 @@
           }
           break;
         case Tool.CAPTION:
-          break;
-        case Tool.CUT:
-          break;
-        case Tool.PAINT:
+          var caption = vm.graph.addCaption({
+            x: svgPoint.x,
+            y: svgPoint.y,
+            label: 'Test caption',
+          });
           break;
       }
     }
@@ -195,6 +277,12 @@
           vm.graph.selectAll(false);
           e.preventDefault();
           break;
+        case 'KeyA':
+          if (e.ctrlKey) {
+            vm.graph.selectAll(true);
+            e.preventDefault();
+          }
+          break;
       }
     }
 
@@ -220,6 +308,10 @@
           break;
         case Tool.CUT:
           vm.graph.removeVertex(vertex);
+          e.stopPropagation();
+          break;
+        case Tool.PAINT:
+          vertex.color = vm.paintColor;
           e.stopPropagation();
           break;
       }
@@ -266,6 +358,10 @@
           vm.graph.removeEdge(edge);
           e.stopPropagation();
           break;
+        case Tool.PAINT:
+          edge.color = vm.paintColor;
+          e.stopPropagation();
+          break;
       }
     }
 
@@ -275,8 +371,41 @@
       }
       switch (vm.tool) {
         case Tool.CURSOR:
-          // TODO
+          break;
+      }
+    }
+
+    function onCaptionMousedown(caption, e) {
+      if (e.which !== 1) {
+        return;
+      }
+
+      e.preventDefault();
+      switch (vm.tool) {
+        case Tool.CURSOR:
+          if (!caption.isSelected && !e.shiftKey) {
+            vm.graph.selectAll(false);
+          }
+          caption.isSelected = true;
           e.stopPropagation();
+          break;
+        case Tool.CUT:
+          vm.graph.removeCaption(caption);
+          e.stopPropagation();
+          break;
+        case Tool.PAINT:
+          caption.color = vm.paintColor;
+          e.stopPropagation();
+          break;
+      }
+    }
+
+    function onCaptionMouseup(caption, e) {
+      if (e.which !== 1) {
+        return;
+      }
+      switch (vm.tool) {
+        case Tool.CURSOR:
           break;
       }
     }
@@ -307,6 +436,13 @@
         x: (x - matrix[0][2]) / matrix[0][0],
         y: (y - matrix[1][2]) / matrix[1][1],
       };
+    }
+
+    function isPointInRect(x, y, rectStartPoint, rectEndPoint) {
+      return x >= Math.min(rectStartPoint.x, rectEndPoint.x) &&
+             x <= Math.max(rectStartPoint.x, rectEndPoint.x) &&
+             y >= Math.min(rectStartPoint.y, rectEndPoint.y) &&
+             y <= Math.max(rectStartPoint.y, rectEndPoint.y);
     }
 
     function save() {

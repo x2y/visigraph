@@ -17,11 +17,27 @@
     fill: none; }
     .viewport .edge.selected {
       stroke: #00007F; }
-  .viewport .handle.selected {
-    fill: #00007F; }
-  .viewport .label {
-    dominant-baseline: hanging; }
-    .viewport .label.selected {
+  .viewport .handle {
+    r: 2.625; }
+    .viewport .handle.selected {
       fill: #00007F; }
+  .viewport .caption {
+    dominant-baseline: hanging; }
+    .viewport .caption.selected {
+      fill: #00007F; }
+  .viewport .vertex-label,
+  .viewport .edge-label,
+  .viewport .caption-label {
+    dominant-baseline: hanging;
+    fill: #444; }
+    .viewport .vertex-label.selected,
+    .viewport .edge-label.selected,
+    .viewport .caption-label.selected {
+      fill: #00007F; }
+  .viewport .selection {
+    fill: rgba(150, 150, 255, 0.4);
+    stroke-linejoin: miter;
+    stroke-width: 1;
+    stroke: #00007F; }
 
 /*# sourceMappingURL=graphs.css.map */
