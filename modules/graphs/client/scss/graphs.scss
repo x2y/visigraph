@@ -13,47 +13,46 @@
   width: 100%;
 
   .vertex {
-    stroke-width: 1px;
-    stroke: #000;
+    circle {
+      stroke-width: 1px;
+      stroke: #000;
+    }
 
     &.selected {
-      fill: #9494CE;
-      stroke: #00007F;
+      circle {
+        fill: #9494CE;
+        stroke: #00007F;
+      }
     }
   }
 
   .edge {
-    fill: none;
+    path { fill: none; }
 
     &.selected {
-      stroke: #00007F;
-    }    
-  }
-
-  .handle {
-    r: 2.625;
-
-    &.selected {
-      fill: #00007F;
+      path { stroke: #00007F; }
+      circle { fill: #00007F; }
     }    
   }
 
   .caption {
-    dominant-baseline: hanging;
+    circle { r: 2.625; }
 
     &.selected {
-      fill: #00007F;
+      circle { fill: #00007F; }
     }
   }
 
-  .vertex-label,
-  .edge-label,
-  .caption-label {
-    dominant-baseline: hanging;
-    fill: #444;
+  .vertex,
+  .edge,
+  .caption {
+    text {
+      dominant-baseline: hanging;
+      fill: #444;
+    }
 
     &.selected {
-      fill: #00007F;
+      text { fill: #00007F; }
     }
   }
 

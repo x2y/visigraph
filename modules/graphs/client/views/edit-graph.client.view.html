@@ -12,59 +12,53 @@
         ng-keydown="vm.onViewportKeydown($event)">
       <g ng-attr-transform="{{vm.transform | svgMatrix}}">
         <!-- Edges -->
-        <path ng-repeat="(id, edge) in vm.graph.edges"
-            ng-attr-class="{{'edge' + (edge.isSelected ? ' selected' : '')}}"
-            ng-attr-stroke="{{edge.color}}"
-            ng-attr-stroke-width="{{edge.thickness}}"
-            ng-attr-d="M{{edge.from.x}},{{edge.from.y}}
-                       {{edge.handleX}},{{edge.handleY}} {{edge.to.x}},{{edge.to.y}}">
-          <title ng-if="edge.label">{{edge.label}}</title>
-        </path>
-        <!-- Edge handles -->
-        <circle ng-repeat="(id, edge) in vm.graph.edges"
-            ng-attr-class="{{'handle' + (edge.isSelected ? ' selected' : '')}}"
-            ng-attr-r="{{1.75 * edge.thickness}}" ng-attr-fill="{{edge.color}}"
-            ng-attr-cx="{{edge.handleX}}" ng-attr-cy="{{edge.handleY}}"
-            ng-mousedown="vm.onEdgeMousedown(edge, $event)"
-            ng-mouseup="vm.onEdgeMouseup(edge, $event)">
-        </circle>
-        <!-- Edge labels -->
-        <text ng-repeat="(id, edge) in vm.graph.edges" ng-show="edge.label"
-            ng-attr-class="{{'edge-label' + (edge.isSelected ? ' selected' : '')}}"
-            ng-attr-x="{{edge.handleX + 1.75 * edge.thickness + 1}}"
-            ng-attr-y="{{edge.handleY + 1.75 * edge.thickness + 1}}">
-          {{edge.label}}
-        </text>
+        <g ng-repeat="(id, edge) in vm.graph.edges"
+            ng-attr-class="{{'edge' + (edge.isSelected ? ' selected' : '')}}">
+          <path ng-attr-stroke="{{edge.color}}" ng-attr-stroke-width="{{edge.thickness}}"
+              ng-attr-d="M{{edge.from.x}},{{edge.from.y}}
+                         {{edge.handleX}},{{edge.handleY}}
+                         {{edge.to.x}},{{edge.to.y}}">
+            <title ng-if="edge.label">{{edge.label}}</title>
+          </path>
+          <circle ng-attr-r="{{1.75 * edge.thickness}}" ng-attr-fill="{{edge.color}}"
+              ng-attr-cx="{{edge.handleX}}" ng-attr-cy="{{edge.handleY}}"
+              ng-mousedown="vm.onEdgeMousedown(edge, $event)"
+              ng-mouseup="vm.onEdgeMouseup(edge, $event)">
+          </circle>
+          <text ng-if="edge.label"
+              ng-attr-x="{{edge.handleX + 1.75 * edge.thickness + 1}}"
+              ng-attr-y="{{edge.handleY + 1.75 * edge.thickness + 1}}">
+            {{edge.label}}
+          </text>
+        </g>
         <!-- Vertices -->
-        <circle ng-repeat="(id, vertex) in vm.graph.vertices"
-            ng-attr-class="{{'vertex' + (vertex.isSelected ? ' selected' : '')}}"
-            ng-attr-r="{{vertex.radius}}" ng-attr-fill="{{vertex.color}}"
-            ng-attr-cx="{{vertex.x}}" ng-attr-cy="{{vertex.y}}"
-            ng-mousedown="vm.onVertexMousedown(vertex, $event)"
-            ng-mouseup="vm.onVertexMouseup(vertex, $event)">
-          <title ng-if="vertex.label">{{vertex.label}}</title>
-        </circle>
-        <text ng-repeat="(id, vertex) in vm.graph.vertices" ng-show="vertex.label"
-            ng-attr-class="{{'vertex-label' + (vertex.isSelected ? ' selected' : '')}}"
-            ng-attr-x="{{vertex.x + vertex.radius + 1}}"
-            ng-attr-y="{{vertex.y + vertex.radius + 1}}">
-          {{vertex.label}}
-        </text>
+        <g ng-repeat="(id, vertex) in vm.graph.vertices"
+            ng-attr-class="{{'vertex' + (vertex.isSelected ? ' selected' : '')}}">
+          <circle ng-attr-r="{{vertex.radius}}" ng-attr-fill="{{vertex.color}}"
+              ng-attr-cx="{{vertex.x}}" ng-attr-cy="{{vertex.y}}"
+              ng-mousedown="vm.onVertexMousedown(vertex, $event)"
+              ng-mouseup="vm.onVertexMouseup(vertex, $event)">
+            <title ng-if="vertex.label">{{vertex.label}}</title>
+          </circle>
+          <text ng-if="vertex.label"
+              ng-attr-x="{{vertex.x + vertex.radius + 1}}"
+              ng-attr-y="{{vertex.y + vertex.radius + 1}}">
+            {{vertex.label}}
+          </text>
+        </g>
         <!-- Captions -->
-        <text ng-repeat="(id, caption) in vm.graph.captions"
-            ng-attr-class="{{'caption-label' + (caption.isSelected ? ' selected' : '')}}"
-            ng-attr-font-size="{{caption.fontSize}}"
-            ng-attr-x="{{caption.x + 4.5}}" ng-attr-y="{{caption.y + 3}}">
-          {{caption.label}}
-        </text>
-        <!-- Caption handles -->
-        <circle ng-repeat="(id, caption) in vm.graph.captions"
-            ng-attr-class="{{'handle' + (caption.isSelected ? ' selected' : '')}}"
-            ng-attr-fill="{{caption.color}}"
-            ng-attr-cx="{{caption.x}}" ng-attr-cy="{{caption.y}}"
-            ng-mousedown="vm.onCaptionMousedown(caption, $event)"
-            ng-mouseup="vm.onCaptionMouseup(caption, $event)">
-        </circle>
+        <g ng-repeat="(id, caption) in vm.graph.captions"
+            ng-attr-class="{{'caption' + (caption.isSelected ? ' selected' : '')}}">
+          <text ng-attr-font-size="{{caption.fontSize}}"
+              ng-attr-x="{{caption.x + 4.5}}" ng-attr-y="{{caption.y + 3}}">
+            {{caption.label}}
+          </text>
+          <circle ng-attr-fill="{{caption.color}}"
+              ng-attr-cx="{{caption.x}}" ng-attr-cy="{{caption.y}}"
+              ng-mousedown="vm.onCaptionMousedown(caption, $event)"
+              ng-mouseup="vm.onCaptionMouseup(caption, $event)">
+          </circle>
+        </g>
       </g>
       <polygon class="selection"
           ng-show="vm.isSelectionVisible"

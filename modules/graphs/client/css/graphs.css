@@ -7,33 +7,31 @@
   height: 500px;
   outline: 1px solid #ddd;
   width: 100%; }
-  .viewport .vertex {
+  .viewport .vertex circle {
     stroke-width: 1px;
     stroke: #000; }
-    .viewport .vertex.selected {
-      fill: #9494CE;
-      stroke: #00007F; }
-  .viewport .edge {
+  .viewport .vertex.selected circle {
+    fill: #9494CE;
+    stroke: #00007F; }
+  .viewport .edge path {
     fill: none; }
-    .viewport .edge.selected {
-      stroke: #00007F; }
-  .viewport .handle {
+  .viewport .edge.selected path {
+    stroke: #00007F; }
+  .viewport .edge.selected circle {
+    fill: #00007F; }
+  .viewport .caption circle {
     r: 2.625; }
-    .viewport .handle.selected {
-      fill: #00007F; }
-  .viewport .caption {
-    dominant-baseline: hanging; }
-    .viewport .caption.selected {
-      fill: #00007F; }
-  .viewport .vertex-label,
-  .viewport .edge-label,
-  .viewport .caption-label {
+  .viewport .caption.selected circle {
+    fill: #00007F; }
+  .viewport .vertex text,
+  .viewport .edge text,
+  .viewport .caption text {
     dominant-baseline: hanging;
     fill: #444; }
-    .viewport .vertex-label.selected,
-    .viewport .edge-label.selected,
-    .viewport .caption-label.selected {
-      fill: #00007F; }
+  .viewport .vertex.selected text,
+  .viewport .edge.selected text,
+  .viewport .caption.selected text {
+    fill: #00007F; }
   .viewport .selection {
     fill: rgba(150, 150, 255, 0.4);
     stroke-linejoin: miter;
