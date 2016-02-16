@@ -9,7 +9,7 @@
 
   function config($stateProvider, $animateProvider) {
     // Make animations opt-in rather than opt-out for performance reasons.
-    $animateProvider.classNameFilter(/ng-animate/);
+    $animateProvider.classNameFilter(/vg-animate/);
 
     // Set up graph-related routes/states.
     $stateProvider

@@ -5,7 +5,7 @@
     .module('graphs')
     .controller('EditGraphController', EditGraphController);
 
-  EditGraphController.$inject = ['$scope', '$state', '$interval', 'graphResolve', 'GraphsService', 'Authentication'];
+  EditGraphController.$inject = ['$scope', '$state', '$interval', 'graphResolve', 'GraphsService', 'hotkeys', 'Authentication'];
 
 
   var PAN_SPEED_FACTOR = 0.15;
@@ -20,7 +20,7 @@
   };
 
 
-  function EditGraphController($scope, $state, $interval, graph, GraphsService, Authentication) {
+  function EditGraphController($scope, $state, $interval, graph, GraphsService, hotkeys, Authentication) {
     var viewportEl = document.querySelector('.viewport');
     var panInterval = -1;
     var panEndPoint = { x: 0, y: 0 };
@@ -41,7 +41,6 @@
     vm.onViewportMousemove = onViewportMousemove;
     vm.onViewportMouseup = onViewportMouseup;
     vm.onViewportDblClick = onViewportDblClick;
-    vm.onViewportKeydown = onViewportKeydown;
     vm.onVertexMousedown = onVertexMousedown;
     vm.onVertexMouseup = onVertexMouseup;
     vm.onEdgeMousedown = onEdgeMousedown;
@@ -49,9 +48,45 @@
     vm.onCaptionMousedown = onCaptionMousedown;
     vm.onCaptionMouseup = onCaptionMouseup;
     vm.onWheel = onWheel;
-    vm.save = save;
+    vm.onSave = onSave;
 
     EditGraphController.Tool = Tool;
+
+    hotkeys.bindTo($scope)
+        .add({
+          combo: 'ctrl+a',
+          description: 'Select all',
+          callback: onSelectAllShortcut
+        })
+        .add({
+          combo: 'escape',
+          description: 'Deselect all',
+          callback: onDeselectAllShortcut
+        })
+        .add({
+          combo: ['backspace', 'del'],
+          description: 'Delete selected',
+          callback: onDeleteSelectedShortcut
+        })
+        .add({
+          combo: ['up', 'down', 'left', 'right',
+                  'shift+up', 'shift+down', 'shift+left', 'shift+right',
+                  'alt+up', 'alt+down', 'alt+left', 'alt+right'],
+          description: 'Translate selected',
+          callback: onTranslateSelectedShortcut
+        })
+        .add({
+          combo: ['ctrl+up', 'ctrl+down', 'ctrl+left', 'ctrl+right',
+                  'ctrl+shift+up', 'ctrl+shift+down', 'ctrl+shift+left', 'ctrl+shift+right',
+                  'ctrl+alt+up', 'ctrl+alt+down', 'ctrl+alt+left', 'ctrl+alt+right'],
+          description: 'Translate viewport',
+          callback: onTranslateViewportShortcut
+        })
+        .add({
+          combo: 'ctrl+s',
+          description: 'Save graph',
+          callback: onSaveShortcut
+        });
 
 
     function getMousePoint(e) {
@@ -69,7 +104,6 @@
     }
 
     function onViewportMousedown(e) {
-      viewportEl.focus();
       if (e.which !== 1) {
         return;
       }
@@ -229,83 +263,7 @@
       }, 30);
     }
 
-    function onViewportKeydown(e) {
-      switch (e.code) {
-        case 'ArrowUp':
-        case 'ArrowRight':
-        case 'ArrowDown':
-        case 'ArrowLeft':
-          var increment = 10;
-          if (e.shiftKey) {
-            increment *= 10;
-          }
-          if (e.altKey) {
-            increment /= 10;
-          }
-          if (e.ctrlKey) {
-            switch (e.code) {
-              case 'ArrowUp':
-                translate(vm.transform, 0, increment);
-                break;
-              case 'ArrowRight':
-                translate(vm.transform, -increment, 0);
-                break;
-              case 'ArrowDown':
-                translate(vm.transform, 0, -increment);
-                break;
-              case 'ArrowLeft':
-                translate(vm.transform, increment, 0);
-                break;
-            }
-          } else {
-            switch (e.code) {
-              case 'ArrowUp':
-                vm.graph.translateElements(0, -increment);
-                break;
-              case 'ArrowRight':
-                vm.graph.translateElements(increment, 0);
-                break;
-              case 'ArrowDown':
-                vm.graph.translateElements(0, increment);
-                break;
-              case 'ArrowLeft':
-                vm.graph.translateElements(-increment, 0);
-                break;
-            }
-          }
-          e.preventDefault();
-          break;
-        case 'Backspace':
-        case 'Delete':
-          var selectedVertices = vm.graph.getSelectedVertices();
-          while (selectedVertices.length > 0) {
-            vm.graph.removeVertex(selectedVertices.pop());
-          }
-          var selectedEdges = vm.graph.getSelectedEdges();
-          while (selectedEdges.length > 0) {
-            vm.graph.removeEdge(selectedEdges.pop());
-          }
-          var selectedCaptions = vm.graph.getSelectedCaptions();
-          while (selectedCaptions.length > 0) {
-            vm.graph.removeCaption(selectedCaptions.pop());
-          }
-          e.preventDefault();
-          break;
-        case 'Escape':
-          vm.graph.selectAll(false);
-          e.preventDefault();
-          break;
-        case 'KeyA':
-          if (e.ctrlKey) {
-            vm.graph.selectAll(true);
-            e.preventDefault();
-          }
-          break;
-      }
-    }
-
     function onVertexMousedown(vertex, e) {
-      viewportEl.focus();
       if (e.which !== 1) {
         return;
       }
@@ -360,7 +318,6 @@
     }
 
     function onEdgeMousedown(edge, e) {
-      viewportEl.focus();
       if (e.which !== 1) {
         return;
       }
@@ -396,7 +353,6 @@
     }
 
     function onCaptionMousedown(caption, e) {
-      viewportEl.focus();
       if (e.which !== 1) {
         return;
       }
@@ -439,6 +395,101 @@
       e.preventDefault();
     }
 
+    function onSelectAllShortcut(e) {
+      vm.graph.selectAll(true);
+      e.preventDefault();
+    }
+
+    function onDeselectAllShortcut(e) {
+      vm.graph.selectAll(false);
+      e.preventDefault();
+    }
+
+    function onDeleteSelectedShortcut(e) {
+      var selectedVertices = vm.graph.getSelectedVertices();
+      while (selectedVertices.length > 0) {
+        vm.graph.removeVertex(selectedVertices.pop());
+      }
+      var selectedEdges = vm.graph.getSelectedEdges();
+      while (selectedEdges.length > 0) {
+        vm.graph.removeEdge(selectedEdges.pop());
+      }
+      var selectedCaptions = vm.graph.getSelectedCaptions();
+      while (selectedCaptions.length > 0) {
+        vm.graph.removeCaption(selectedCaptions.pop());
+      }
+      e.preventDefault();
+    }
+
+    function onTranslateSelectedShortcut(e) {
+      var increment = 10;
+      if (e.shiftKey) {
+        increment *= 10;
+      }
+      if (e.altKey) {
+        increment /= 10;
+      }
+      switch (e.code) {
+        case 'ArrowUp':
+          vm.graph.translateElements(0, -increment);
+          break;
+        case 'ArrowRight':
+          vm.graph.translateElements(increment, 0);
+          break;
+        case 'ArrowDown':
+          vm.graph.translateElements(0, increment);
+          break;
+        case 'ArrowLeft':
+          vm.graph.translateElements(-increment, 0);
+          break;
+      }
+      e.preventDefault();
+    }
+
+    function onTranslateViewportShortcut(e) {
+      var increment = 10;
+      if (e.shiftKey) {
+        increment *= 10;
+      }
+      if (e.altKey) {
+        increment /= 10;
+      }
+      switch (e.code) {
+        case 'ArrowUp':
+          translate(vm.transform, 0, increment);
+          break;
+        case 'ArrowRight':
+          translate(vm.transform, -increment, 0);
+          break;
+        case 'ArrowDown':
+          translate(vm.transform, 0, -increment);
+          break;
+        case 'ArrowLeft':
+          translate(vm.transform, increment, 0);
+          break;
+      }
+      e.preventDefault();
+    }
+
+    function onSaveShortcut(e) {
+      onSave();
+      e.preventDefault();
+    }
+
+    function onSave() {
+      vm.graph.$update(successCallback, errorCallback);
+
+      function successCallback(res) {
+        $state.go('graphs.edit', {
+          graphId: res._id
+        });
+      }
+
+      function errorCallback(res) {
+        vm.error = res.data.message;
+      }
+    }
+
     function translate(matrix, x, y) {
       matrix[0][2] += x;
       matrix[1][2] += y;
@@ -463,20 +514,6 @@
              x <= Math.max(rectStartPoint.x, rectEndPoint.x) &&
              y >= Math.min(rectStartPoint.y, rectEndPoint.y) &&
              y <= Math.max(rectStartPoint.y, rectEndPoint.y);
-    }
-
-    function save() {
-      vm.graph.$update(successCallback, errorCallback);
-
-      function successCallback(res) {
-        $state.go('graphs.edit', {
-          graphId: res._id
-        });
-      }
-
-      function errorCallback(res) {
-        vm.error = res.data.message;
-      }
     }
   }
 })();

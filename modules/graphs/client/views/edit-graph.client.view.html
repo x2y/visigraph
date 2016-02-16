@@ -17,8 +17,7 @@
         ng-mousedown="vm.onViewportMousedown($event)"
         ng-mousemove="vm.onViewportMousemove($event)"
         ng-mouseup="vm.onViewportMouseup($event)"
-        ng-dblclick="vm.onViewportDblClick($event)"
-        ng-keydown="vm.onViewportKeydown($event)">
+        ng-dblclick="vm.onViewportDblClick($event)">
       <g ng-attr-transform="{{vm.transform | svgMatrix}}">
         <!-- Edges -->
         <g ng-repeat="(id, edge) in vm.graph.edges track by id"
@@ -84,6 +83,6 @@
     <label><input type="radio" value="cut" ng-model="vm.tool"> Cut</label>
     <label><input type="radio" value="paint" ng-model="vm.tool"> Paint</label>
     <br>
-    <button ng-click="vm.save()">Save</button>
+    <button ng-click="vm.onSave()">Save</button>
   </div>
 </section>
