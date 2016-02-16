@@ -136,6 +136,7 @@
       // TODO: Center the rearranged graph around its original centroid.
       var hasSelectedVertices = graph.hasSelectedVertices();
 
+      // Convert the vertices to D3-friendly "nodes".
       var vertexD3Nodes = {};
       var d3Nodes = [];
       for (var id in graph.vertices) {
@@ -150,13 +151,19 @@
         d3Nodes.push(node);
       }
 
+      // Convert the edges to D3-friendly "links".
       var d3Links = [];
       for (var id in graph.edges) {
         var edge = graph.edges[id];
+        var source = vertexD3Nodes[edge.from.id];
+        var target = vertexD3Nodes[edge.to.id];
+        if (source == target || (source.fixed && target.fixed)) {
+          continue;  // No sense wasting computations on loops and links between fixed nodes.
+        }
         d3Links.push({
           edge: edge,
-          source: vertexD3Nodes[edge.from.id],
-          target: vertexD3Nodes[edge.to.id],
+          source: source,
+          target: target,
         });
       }
 
