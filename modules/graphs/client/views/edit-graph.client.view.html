@@ -66,8 +66,7 @@
           </circle>
         </g>
       </g>
-      <polygon class="selection"
-          ng-show="vm.isSelectionVisible"
+      <polygon ng-attr-class="{{'selection' + (vm.isSelectionShown ? ' shown' : '')}}"
           ng-attr-points="{{vm.selectionStartPoint.x}},{{vm.selectionStartPoint.y}}
                           {{vm.selectionEndPoint.x}},{{vm.selectionStartPoint.y}}
                           {{vm.selectionEndPoint.x}},{{vm.selectionEndPoint.y}}

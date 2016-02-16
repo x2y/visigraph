@@ -34,8 +34,14 @@
     fill: #00007F; }
   .viewport .selection {
     fill: rgba(150, 150, 255, 0.4);
+    opacity: 0;
+    pointer-events: none;
     stroke-linejoin: miter;
     stroke-width: 1;
-    stroke: #00007F; }
+    stroke: #00007F;
+    transition: opacity 300ms; }
+    .viewport .selection.shown {
+      opacity: 1;
+      transition: none; }
 
 /*# sourceMappingURL=graphs.css.map */

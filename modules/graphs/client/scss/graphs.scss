@@ -1,3 +1,6 @@
+$fast: 300ms;
+$slow: $fast * 2;
+
 @mixin user-select($user-select) {
   -webkit-user-select: $user-select;
      -moz-user-select: $user-select;
@@ -58,8 +61,16 @@
 
   .selection {
     fill: rgba(150, 150, 255, .4);
+    opacity: 0;
+    pointer-events: none;
     stroke-linejoin: miter;
     stroke-width: 1;
     stroke: #00007F;
+    transition: opacity $fast;
+
+    &.shown {
+      opacity: 1;
+      transition: none;
+    }
   }
 }

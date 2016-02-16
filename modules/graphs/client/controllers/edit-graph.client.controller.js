@@ -32,7 +32,7 @@
                     [0, 1, 0],
                     [0, 0, 1]];
     vm.tool = Tool.CURSOR;
-    vm.isSelectionVisible = false;
+    vm.isSelectionShown = false;
     vm.selectionStartPoint = { x: 0, y: 0 };
     vm.selectionEndPoint = { x: 10, y: 10 };
     vm.paintColor = '#f00';
@@ -117,7 +117,7 @@
           if (!e.shiftKey) {
             vm.graph.selectAll(false);
           }
-          vm.isSelectionVisible = true;
+          vm.isSelectionShown = true;
           vm.selectionEndPoint = vm.selectionStartPoint = { x: mousePoint.x, y: mousePoint.y };
           break;
       }
@@ -131,7 +131,7 @@
       var mousePoint = getMousePoint(e);
       switch (vm.tool) {
         case Tool.CURSOR:
-          if (!vm.isSelectionVisible &&
+          if (!vm.isSelectionShown &&
               (vm.graph.hasSelectedVertices() || vm.graph.hasSelectedEdges() ||
                vm.graph.hasSelectedCaptions())) {
             var scale = vm.transform[0][0];
@@ -160,7 +160,7 @@
         case Tool.CURSOR:
         case Tool.CUT:
         case Tool.PAINT:
-          if (!vm.isSelectionVisible) {
+          if (!vm.isSelectionShown) {
             break;
           }
           var svgSelectionStartPoint = invertPoint(vm.transform, vm.selectionStartPoint.x,
@@ -217,7 +217,7 @@
             }
           }
 
-          vm.isSelectionVisible = false;
+          vm.isSelectionShown = false;
           break;
         case Tool.GRAPH:
           var vertex = vm.graph.addVertex({
