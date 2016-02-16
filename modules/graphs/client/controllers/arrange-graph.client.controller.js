@@ -86,10 +86,24 @@
       var rows = Math.ceil(Math.sqrt(vertices.length));
       var cols = rows;  // For now we only support square grids.
 
-      // TODO: Sort the vertices before arrangement to minimize vertex translation, as is done with
-      // arrangeAsCircle().
+      // Get the min/max Y values bounding the actionable vertices.
+      var minY = Infinity, maxY = -Infinity;
+      for (var i = 0; i < vertices.length; ++i) {
+        minY = Math.min(minY, vertices[i].y);
+        maxY = Math.max(maxY, vertices[i].y);
+      }
+      var height = maxY - minY;
 
-      // Rearrange the vertices into a grid.
+      // Sort the vertices before arrangement by row and x position to minimize vertex rearrangement
+      // if the vertices are already in a gridlike configuration.
+      vertices.sort(function (a, b) {
+        // We need the Math.min to prevent vertices at maxY from falling into an extra row "bucket".
+        var aRow = Math.min(rows - 1, Math.floor(rows * (a.y - minY) / height));
+        var bRow = Math.min(rows - 1, Math.floor(rows * (b.y - minY) / height));
+        return aRow - bRow || a.x - b.x;
+      });
+
+      // Rearrange them into a grid.
       var incidentEdges = {};
       for (var row = 0; row < rows; ++row) {
         for (var col = 0; col < cols; ++col) {
