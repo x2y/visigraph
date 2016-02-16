@@ -54,7 +54,8 @@
 
 
     function onViewportMousedown(e) {
-      e.target.focus();
+      var viewportEl = e.target.closest('.viewport');
+      viewportEl.focus();
       if (e.which !== 1) {
         return;
       }
@@ -288,6 +289,8 @@
     }
 
     function onVertexMousedown(vertex, e) {
+      var viewportEl = e.target.closest('.viewport');
+      viewportEl.focus();
       if (e.which !== 1) {
         return;
       }
@@ -342,6 +345,8 @@
     }
 
     function onEdgeMousedown(edge, e) {
+      var viewportEl = e.target.closest('.viewport');
+      viewportEl.focus();
       if (e.which !== 1) {
         return;
       }
@@ -377,6 +382,8 @@
     }
 
     function onCaptionMousedown(caption, e) {
+      var viewportEl = e.target.closest('.viewport');
+      viewportEl.focus();
       if (e.which !== 1) {
         return;
       }
