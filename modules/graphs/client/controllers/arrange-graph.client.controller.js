@@ -7,6 +7,10 @@
 
   ArrangeGraphController.$inject = ['$scope', '$state', '$interval'];
 
+
+  var VERTEX_SPACING = 70;
+
+
   function ArrangeGraphController($scope, $state, $interval) {
     var graph = $scope.vm.graph;
 
@@ -17,27 +21,12 @@
     vm.arrangeAsSprings = arrangeAsSprings;
 
     function arrangeAsCircle() {
-      // Get the actionable vertices.
-      var vertices = graph.getSelectedVertices();
-      if (!vertices.length) {
-        for (var id in graph.vertices) {
-          vertices.push(graph.vertices[id]);
-        }
-      }
-
-      // Find their centroid.
-      var centroidX = 0;
-      var centroidY = 0;
-      for (var i = 0; i < vertices.length; ++i) {
-        centroidX += vertices[i].x;
-        centroidY += vertices[i].y;
-      }
-      centroidX /= vertices.length;
-      centroidY /= vertices.length;
+      var vertices = getActionableVertices();
+      var centroid = getCentroid(vertices);
 
       // Sort the vertices by angle around the centroid.
       vertices.sort(function (a, b) {
-        return a.angleFrom(centroidX, centroidY) - b.angleFrom(centroidX, centroidY);
+        return a.angleFrom(centroid.x, centroid.y) - b.angleFrom(centroid.x, centroid.y);
       });
 
       // Fix the edge-case where the last vertex is actually closer to the 0-angle than the first
@@ -58,20 +47,20 @@
       // that degenerate condition by using the closest vertex to the 0-angle (rather than the
       // lowest angle) so that the moved vertex snaps back to its original position and no other
       // vertices move relative to the centroid.
-      if (-vertices[0].angleFrom(centroidX, centroidY) <
-          vertices[vertices.length - 1].angleFrom(centroidX, centroidY)) {
+      if (-vertices[0].angleFrom(centroid.x, centroid.y) <
+          vertices[vertices.length - 1].angleFrom(centroid.x, centroid.y)) {
         vertices.unshift(vertices.pop());
       }
 
       // Rearrange them radially according to their existing order around their centroid while also
       // collecting their incident edges.
-      var radius = 10 * vertices.length;
+      var radius = VERTEX_SPACING * vertices.length / (2 * Math.PI);
       var incidentEdges = {};
       for (var i = 0; i < vertices.length; ++i) {
         var vertex = vertices[i];
         var angle = Math.PI * (2 * i / vertices.length - 1);
-        vertex.x = centroidX + radius * Math.cos(angle);
-        vertex.y = centroidY + radius * Math.sin(angle);
+        vertex.x = centroid.x + radius * Math.cos(angle);
+        vertex.y = centroid.y + radius * Math.sin(angle);
 
         for (var id in vertex.edges) {
           incidentEdges[id] = vertex.edges[id];
@@ -85,7 +74,43 @@
     }
 
     function arrangeAsGrid() {
-      // TODO
+      // TODO: At some point we should probably transition this function to use a more generalizable
+      // approach. Specifically, I'm thinking of using the Hungarian Algorithm to determine an
+      // optimal mapping between the original vertex coordinates and their ideal destination
+      // coordinates (see http://goo.gl/XRdVZl for a good explanation of this algorithm). The hard
+      // part will be determining the ideal grid dimensions from the existing vertex coordinates. We
+      // could assume a square grid, or try multiple different dimensions for the grid and chose the
+      // one with minimal cost, but neither approach is ideal.
+      var vertices = getActionableVertices();
+      var centroid = getCentroid(vertices);
+      var rows = Math.ceil(Math.sqrt(vertices.length));
+      var cols = rows;  // For now we only support square grids.
+
+      // TODO: Sort the vertices before arrangement to minimize vertex translation, as is done with
+      // arrangeAsCircle().
+
+      // Rearrange the vertices into a grid.
+      var incidentEdges = {};
+      for (var row = 0; row < rows; ++row) {
+        for (var col = 0; col < cols; ++col) {
+          var vertex = vertices[row * cols + col];
+          if (!vertex) {
+            break;  // Handle non-square numbers of vertices.
+          }
+
+          vertex.x = centroid.x + (col - (cols - 1) / 2) * VERTEX_SPACING;
+          vertex.y = centroid.y + (row - (rows - 1) / 2) * VERTEX_SPACING;
+
+          for (var id in vertex.edges) {
+            incidentEdges[id] = vertex.edges[id];
+          }
+        }
+      }
+
+      // Fix the edges altered by previous vertex translations.
+      for (var id in incidentEdges) {
+        incidentEdges[id].fix();
+      }
     }
 
     function arrangeAsTree() {
@@ -94,6 +119,27 @@
 
     function arrangeAsSprings() {
       // TODO
+    }
+
+    function getActionableVertices() {
+      var vertices = graph.getSelectedVertices();
+      if (!vertices.length) {
+        for (var id in graph.vertices) {
+          vertices.push(graph.vertices[id]);
+        }
+      }
+      return vertices;
+    }
+
+    function getCentroid(vertices) {
+      var centroid = { x: 0, y: 0 };
+      for (var i = 0; i < vertices.length; ++i) {
+        centroid.x += vertices[i].x;
+        centroid.y += vertices[i].y;
+      }
+      centroid.x /= vertices.length;
+      centroid.y /= vertices.length;
+      return centroid;
     }
   }
 })();
