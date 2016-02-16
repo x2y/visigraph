@@ -19,7 +19,8 @@ module.exports = {
         'public/lib/angular-file-upload/dist/angular-file-upload.js',
         'public/lib/hamsterjs/hamster.js',
         'public/lib/owasp-password-strength-test/owasp-password-strength-test.js',
-        'public/lib/angular-hotkeys/build/hotkeys.min.js'
+        'public/lib/angular-hotkeys/build/hotkeys.min.js',
+        'public/lib/d3/d3.min.js'
       ],
       tests: ['public/lib/angular-mocks/angular-mocks.js']
     },

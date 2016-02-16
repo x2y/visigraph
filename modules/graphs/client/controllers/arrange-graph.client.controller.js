@@ -18,7 +18,7 @@
     vm.arrangeAsCircle = arrangeAsCircle;
     vm.arrangeAsGrid = arrangeAsGrid;
     vm.arrangeAsTree = arrangeAsTree;
-    vm.arrangeAsSprings = arrangeAsSprings;
+    vm.arrangeAsForces = arrangeAsForces;
 
     function arrangeAsCircle() {
       var vertices = getActionableVertices();
@@ -131,8 +131,58 @@
       // TODO
     }
 
-    function arrangeAsSprings() {
-      // TODO
+    function arrangeAsForces() {
+      // TODO: Support vertex/edge weights.
+      // TODO: Center the rearranged graph around its original centroid.
+      var hasSelectedVertices = graph.hasSelectedVertices();
+
+      var vertexD3Nodes = {};
+      var d3Nodes = [];
+      for (var id in graph.vertices) {
+        var vertex = graph.vertices[id];
+        var node = {
+          vertex: vertex,
+          x: vertex.x,
+          y: vertex.y,
+          fixed: hasSelectedVertices && !vertex.isSelected,
+        };
+        vertexD3Nodes[id] = node;
+        d3Nodes.push(node);
+      }
+
+      var d3Links = [];
+      for (var id in graph.edges) {
+        var edge = graph.edges[id];
+        d3Links.push({
+          edge: edge,
+          source: vertexD3Nodes[edge.from.id],
+          target: vertexD3Nodes[edge.to.id],
+        });
+      }
+
+      // Use D3's efficient force layout engine for the heavy lifting. See its API reference at
+      // https://github.com/mbostock/d3/wiki/Force-Layout for more information.
+      var force = d3.layout.force()
+          .nodes(d3Nodes)
+          .links(d3Links)
+          .linkDistance(VERTEX_SPACING)
+          .charge(-500)
+          .on('tick', onTick)
+          .start();
+
+      function onTick() {
+        $scope.$apply(function () {
+          for (var i = 0; i < d3Nodes.length; ++i) {
+            var d3Node = d3Nodes[i];
+            d3Node.vertex.x = d3Node.x;
+            d3Node.vertex.y = d3Node.y;
+          }
+
+          for (var i = 0; i < d3Links.length; ++i) {
+            d3Links[i].edge.fix();
+          }
+        });
+      }
     }
 
     function getActionableVertices() {
