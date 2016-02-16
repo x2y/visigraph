@@ -349,6 +349,10 @@
     this.weight = opt_data.weight || 1;
   }
 
+  Vertex.prototype.angleFrom = function (x, y) {
+    return Math.atan2(this.y - y, this.x - x);
+  };
+
   Vertex.prototype.toSerializable = function () {
     return {
       id:         this.id,
@@ -381,7 +385,7 @@
     this.fix();
   }
 
-  Edge.prototype.fix = function() {
+  Edge.prototype.fix = function () {
     this.handleX = (this.from.x + this.to.x) / 2;
     this.handleY = (this.from.y + this.to.y) / 2;
   };

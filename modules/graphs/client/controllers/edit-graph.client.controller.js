@@ -196,7 +196,7 @@
       panEndPoint = invertPoint(vm.transform, mousePoint.x, mousePoint.y);
       
       $interval.cancel(panInterval);
-      panInterval = $interval(function() {
+      panInterval = $interval(function () {
         var panStartPoint = invertPoint(vm.transform, viewportEl.offsetWidth / 2,
             viewportEl.offsetHeight / 2);
         var scale = vm.transform[0][0];

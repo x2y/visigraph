@@ -3,6 +3,15 @@
     <h1>{{vm.graph.name}}</h1>
   </div>
   <div class="col-md-12">
+    <div ng-controller="ArrangeGraphController as arrangeVm" class="btn-toolbar">
+      <div class="btn-group btn-group-lg">
+        <button class="btn btn-default" ng-click="arrangeVm.arrangeAsCircle()">Circle</button>
+        <button class="btn btn-default" ng-click="arrangeVm.arrangeAsGrid()">Grid</button>
+        <button class="btn btn-default" ng-click="arrangeVm.arrangeAsTree()">Tree</button>
+        <button class="btn btn-default" ng-click="arrangeVm.arrangeAsSprings()">Springs</button>
+      </div>
+    </div>
+    <br>
     <svg class="viewport" tabindex="0"
         msd-wheel="vm.onWheel($event, $delta, $deltaX, $deltaY)"
         ng-mousedown="vm.onViewportMousedown($event)"
