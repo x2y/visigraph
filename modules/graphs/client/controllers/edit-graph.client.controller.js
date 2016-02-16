@@ -21,6 +21,7 @@
 
 
   function EditGraphController($scope, $state, $interval, graph, GraphsService, Authentication) {
+    var viewportEl = document.querySelector('.viewport');
     var panInterval = -1;
     var panEndPoint = { x: 0, y: 0 };
 
@@ -53,13 +54,27 @@
     EditGraphController.Tool = Tool;
 
 
+    function getMousePoint(e) {
+      // Unfortunately, we can't just use offsetX/offsetY from the event because, when hovering over
+      // a <text> element they are incorrectly (or at least unexpectedly) computed relative to the
+      // <text> node, rather than the SVG viewportEl. So instead we must use the jqLite-normalize
+      // pageX/pageY members relative to the viewportEl's computed equivalent page x/y values.
+      var boundingClientRect = viewportEl.getBoundingClientRect();
+      return {
+        x: e.pageX - boundingClientRect.left - window.pageXOffset -
+            document.documentElement.scrollLeft,
+        y: e.pageY - boundingClientRect.top - window.pageYOffset -
+            document.documentElement.scrollTop,
+      };
+    }
+
     function onViewportMousedown(e) {
-      var viewportEl = e.target.closest('.viewport');
       viewportEl.focus();
       if (e.which !== 1) {
         return;
       }
 
+      var mousePoint = getMousePoint(e);
       e.preventDefault();
       switch (vm.tool) {
         case Tool.CURSOR:
@@ -69,7 +84,7 @@
             vm.graph.selectAll(false);
           }
           vm.isSelectionVisible = true;
-          vm.selectionEndPoint = vm.selectionStartPoint = { x: e.offsetX, y: e.offsetY };
+          vm.selectionEndPoint = vm.selectionStartPoint = { x: mousePoint.x, y: mousePoint.y };
           break;
       }
     }
@@ -78,6 +93,8 @@
       if (e.which !== 1) {
         return;
       }
+
+      var mousePoint = getMousePoint(e);
       switch (vm.tool) {
         case Tool.CURSOR:
           if (!vm.isSelectionVisible &&
@@ -85,14 +102,14 @@
                vm.graph.hasSelectedCaptions())) {
             var scale = vm.transform[0][0];
             vm.graph.translateElements(e.movementX / scale, e.movementY / scale);
-            vm.selectionEndPoint = { x: e.offsetX, y: e.offsetY };
+            vm.selectionEndPoint = { x: mousePoint.x, y: mousePoint.y };
           } else {
-            vm.selectionEndPoint = { x: e.offsetX, y: e.offsetY };
+            vm.selectionEndPoint = { x: mousePoint.x, y: mousePoint.y };
           }  
           break;
         case Tool.CUT:
         case Tool.PAINT:
-          vm.selectionEndPoint = { x: e.offsetX, y: e.offsetY };
+          vm.selectionEndPoint = { x: mousePoint.x, y: mousePoint.y };
           break;
       }
     }
@@ -102,7 +119,7 @@
         return;
       }
 
-      var mousePoint = { x: e.offsetX, y: e.offsetY };
+      var mousePoint = getMousePoint(e);
       var svgPoint = invertPoint(vm.transform, mousePoint.x, mousePoint.y);
       switch (vm.tool) {
         case Tool.CURSOR:
@@ -193,8 +210,7 @@
     }
 
     function onViewportDblClick(e) {
-      var viewportEl = e.target.closest('.viewport');
-      var mousePoint = { x: e.offsetX, y: e.offsetY };
+      var mousePoint = getMousePoint(e);
       panEndPoint = invertPoint(vm.transform, mousePoint.x, mousePoint.y);
       
       $interval.cancel(panInterval);
@@ -289,7 +305,6 @@
     }
 
     function onVertexMousedown(vertex, e) {
-      var viewportEl = e.target.closest('.viewport');
       viewportEl.focus();
       if (e.which !== 1) {
         return;
@@ -345,7 +360,6 @@
     }
 
     function onEdgeMousedown(edge, e) {
-      var viewportEl = e.target.closest('.viewport');
       viewportEl.focus();
       if (e.which !== 1) {
         return;
@@ -382,7 +396,6 @@
     }
 
     function onCaptionMousedown(caption, e) {
-      var viewportEl = e.target.closest('.viewport');
       viewportEl.focus();
       if (e.which !== 1) {
         return;
@@ -419,11 +432,10 @@
     }
 
     function onWheel(e, delta, deltaX, deltaY) {
-      var x = e.originalEvent.offsetX;
-      var y = e.originalEvent.offsetY;
-      translate(vm.transform, -x, -y);
+      var mousePoint = getMousePoint(e.originalEvent);
+      translate(vm.transform, -mousePoint.x, -mousePoint.y);
       scale(vm.transform, delta * WHEEL_SCALE_FACTOR + 1);
-      translate(vm.transform, x, y);
+      translate(vm.transform, mousePoint.x, mousePoint.y);
       e.preventDefault();
     }
 
