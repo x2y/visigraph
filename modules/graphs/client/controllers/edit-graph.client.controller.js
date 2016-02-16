@@ -79,8 +79,9 @@
       }
       switch (vm.tool) {
         case Tool.CURSOR:
-          if (vm.graph.hasSelectedVertices() || vm.graph.hasSelectedEdges() ||
-              vm.graph.hasSelectedCaptions()) {
+          if (!vm.isSelectionVisible &&
+              (vm.graph.hasSelectedVertices() || vm.graph.hasSelectedEdges() ||
+               vm.graph.hasSelectedCaptions())) {
             var scale = vm.transform[0][0];
             vm.graph.translateElements(e.movementX / scale, e.movementY / scale);
             vm.selectionEndPoint = { x: e.offsetX, y: e.offsetY };
