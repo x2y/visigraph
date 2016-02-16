@@ -24,6 +24,7 @@
     var viewportEl = document.querySelector('.viewport');
     var panInterval = -1;
     var panEndPoint = { x: 0, y: 0 };
+    var isMouseDown = false;
 
     var vm = this;
     vm.graph = graph;
@@ -44,9 +45,7 @@
     vm.onVertexMousedown = onVertexMousedown;
     vm.onVertexMouseup = onVertexMouseup;
     vm.onEdgeMousedown = onEdgeMousedown;
-    vm.onEdgeMouseup = onEdgeMouseup;
     vm.onCaptionMousedown = onCaptionMousedown;
-    vm.onCaptionMouseup = onCaptionMouseup;
     vm.onWheel = onWheel;
     vm.onSave = onSave;
 
@@ -108,6 +107,7 @@
         return;
       }
 
+      isMouseDown = true;
       var mousePoint = getMousePoint(e);
       e.preventDefault();
       switch (vm.tool) {
@@ -124,7 +124,7 @@
     }
 
     function onViewportMousemove(e) {
-      if (e.which !== 1) {
+      if (!isMouseDown) {
         return;
       }
 
@@ -153,6 +153,7 @@
         return;
       }
 
+      isMouseDown = false;
       var mousePoint = getMousePoint(e);
       var svgPoint = invertPoint(vm.transform, mousePoint.x, mousePoint.y);
       switch (vm.tool) {
@@ -268,6 +269,7 @@
         return;
       }
 
+      isMouseDown = true;
       e.preventDefault();
       switch (vm.tool) {
         case Tool.CURSOR:
@@ -298,6 +300,8 @@
       if (e.which !== 1) {
         return;
       }
+
+      isMouseDown = false;
       switch (vm.tool) {
         case Tool.GRAPH:
           var selectedVertices = vm.graph.getSelectedVertices();
@@ -322,6 +326,7 @@
         return;
       }
 
+      isMouseDown = true;
       e.preventDefault();
       switch (vm.tool) {
         case Tool.CURSOR:
@@ -342,21 +347,12 @@
       }
     }
 
-    function onEdgeMouseup(edge, e) {
-      if (e.which !== 1) {
-        return;
-      }
-      switch (vm.tool) {
-        case Tool.CURSOR:
-          break;
-      }
-    }
-
     function onCaptionMousedown(caption, e) {
       if (e.which !== 1) {
         return;
       }
 
+      isMouseDown = true;
       e.preventDefault();
       switch (vm.tool) {
         case Tool.CURSOR:
@@ -373,16 +369,6 @@
         case Tool.PAINT:
           caption.color = vm.paintColor;
           e.stopPropagation();
-          break;
-      }
-    }
-
-    function onCaptionMouseup(caption, e) {
-      if (e.which !== 1) {
-        return;
-      }
-      switch (vm.tool) {
-        case Tool.CURSOR:
           break;
       }
     }

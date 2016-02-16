@@ -30,8 +30,7 @@
           </path>
           <circle ng-attr-r="{{1.75 * edge.thickness}}" ng-attr-fill="{{edge.color}}"
               ng-attr-cx="{{edge.handleX}}" ng-attr-cy="{{edge.handleY}}"
-              ng-mousedown="vm.onEdgeMousedown(edge, $event)"
-              ng-mouseup="vm.onEdgeMouseup(edge, $event)">
+              ng-mousedown="vm.onEdgeMousedown(edge, $event)">
           </circle>
           <text ng-if="edge.label"
               ng-attr-x="{{edge.handleX + 1.75 * edge.thickness + 1}}"
@@ -63,8 +62,7 @@
           </text>
           <circle ng-attr-fill="{{caption.color}}"
               ng-attr-cx="{{caption.x}}" ng-attr-cy="{{caption.y}}"
-              ng-mousedown="vm.onCaptionMousedown(caption, $event)"
-              ng-mouseup="vm.onCaptionMouseup(caption, $event)">
+              ng-mousedown="vm.onCaptionMousedown(caption, $event)">
           </circle>
         </g>
       </g>
