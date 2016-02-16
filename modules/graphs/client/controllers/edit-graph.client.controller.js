@@ -95,9 +95,9 @@
       // pageX/pageY members relative to the viewportEl's computed equivalent page x/y values.
       var boundingClientRect = viewportEl.getBoundingClientRect();
       return {
-        x: e.pageX - boundingClientRect.left - window.pageXOffset -
+        x: e.pageX - boundingClientRect.left - document.body.scrollLeft -
             document.documentElement.scrollLeft,
-        y: e.pageY - boundingClientRect.top - window.pageYOffset -
+        y: e.pageY - boundingClientRect.top - document.body.scrollTop -
             document.documentElement.scrollTop,
       };
     }
