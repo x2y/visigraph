@@ -131,7 +131,7 @@
 
     function arrangeAsTree(d3Tree, separateFn, applyFn) {
       var vertices = graph.getSelectedVertices();
-      if (vertices.length != 1) {
+      if (vertices.length !== 1) {
         return;
       }
 
@@ -195,7 +195,7 @@
 
     function arrangeAsLinearTree() {
       arrangeAsTree(d3.layout.tree().nodeSize([VERTEX_SPACING, VERTEX_SPACING]), function (a, b) {
-        return a.parent == b.parent ? 1 : 2;
+        return a.parent === b.parent ? 1 : 2;
       }, function (d3Node, rootX, rootY) {
         d3Node.vertex.x = d3Node.x + rootX;
         d3Node.vertex.y = d3Node.y + rootY;
@@ -204,7 +204,7 @@
 
     function arrangeAsRadialTree() {
       arrangeAsTree(d3.layout.tree().size([2 * Math.PI, 1]), function (a, b) {
-        return (a.parent == b.parent ? 1 : 2) / a.depth;
+        return (a.parent === b.parent ? 1 : 2) / a.depth;
       }, function (d3Node, rootX, rootY) {
         d3Node.vertex.x = VERTEX_SPACING * d3Node.depth * Math.cos(d3Node.x) + rootX;
         d3Node.vertex.y = VERTEX_SPACING * d3Node.depth * Math.sin(d3Node.x) + rootY;
@@ -237,7 +237,7 @@
         var edge = graph.edges[id];
         var source = vertexD3Nodes[edge.from.id];
         var target = vertexD3Nodes[edge.to.id];
-        if (source == target || (source.fixed && target.fixed)) {
+        if (source === target || (source.fixed && target.fixed)) {
           continue;  // No sense wasting computations on loops and links between fixed nodes.
         }
         d3Links.push({

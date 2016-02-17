@@ -19,6 +19,7 @@
     "ApplicationConfiguration": true
   },
   "predef": [ // Extra globals.
+    "d3",
     "inject",
     "by",
     "browser",
