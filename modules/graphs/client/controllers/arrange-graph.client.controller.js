@@ -213,8 +213,8 @@
 
     function arrangeAsForces() {
       // TODO: Support vertex/edge weights.
-      // TODO: Center the rearranged graph around its original centroid.
       var hasSelectedVertices = graph.hasSelectedVertices();
+      var centroid = getCentroid(graph.vertices);
 
       // Convert the vertices to D3-friendly "nodes".
       var vertexD3Nodes = {};
@@ -223,8 +223,8 @@
         var vertex = graph.vertices[id];
         var node = {
           vertex: vertex,
-          x: vertex.x,
-          y: vertex.y,
+          x: vertex.x - centroid.x,
+          y: vertex.y - centroid.y,
           fixed: hasSelectedVertices && !vertex.isSelected,
         };
         vertexD3Nodes[id] = node;
@@ -262,8 +262,8 @@
         $scope.$apply(function () {
           for (var i = 0; i < d3Nodes.length; ++i) {
             var d3Node = d3Nodes[i];
-            d3Node.vertex.x = d3Node.x;
-            d3Node.vertex.y = d3Node.y;
+            d3Node.vertex.x = d3Node.x + centroid.x;
+            d3Node.vertex.y = d3Node.y + centroid.y;
           }
 
           for (var i = 0; i < d3Links.length; ++i) {
@@ -284,13 +284,15 @@
     }
 
     function getCentroid(vertices) {
+      var length = 0;
       var centroid = { x: 0, y: 0 };
-      for (var i = 0; i < vertices.length; ++i) {
-        centroid.x += vertices[i].x;
-        centroid.y += vertices[i].y;
+      for (var id in vertices) {
+        centroid.x += vertices[id].x;
+        centroid.y += vertices[id].y;
+        ++length;
       }
-      centroid.x /= vertices.length;
-      centroid.y /= vertices.length;
+      centroid.x /= length;
+      centroid.y /= length;
       return centroid;
     }
   }
