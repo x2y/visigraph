@@ -17,8 +17,10 @@
     var vm = this;
     vm.arrangeAsCircle = arrangeAsCircle;
     vm.arrangeAsGrid = arrangeAsGrid;
-    vm.arrangeAsTree = arrangeAsTree;
+    vm.arrangeAsLinearTree = arrangeAsLinearTree;
+    vm.arrangeAsRadialTree = arrangeAsRadialTree;
     vm.arrangeAsForces = arrangeAsForces;
+
 
     function arrangeAsCircle() {
       var vertices = getActionableVertices();
@@ -127,7 +129,72 @@
       }
     }
 
-    function arrangeAsTree() {
+    function arrangeAsLinearTree() {
+      var vertices = graph.getSelectedVertices();
+      if (vertices.length != 1) {
+        return;
+      }
+
+      var vertexD3Nodes = {};
+      var edgesVisited = {};
+
+      var root = d3NodeFrom(vertices[0], vertexD3Nodes);
+      var rootX = vertices[0].x, rootY = vertices[0].y;
+      var d3Nodes = [root];
+      while (d3Nodes.length > 0) {
+        var d3Node = d3Nodes.shift();
+        for (var id in d3Node.vertex.edges) {
+          var edge = d3Node.vertex.edges[id];
+          edgesVisited[id] = edge;
+
+          if (!(edge.from.id in vertexD3Nodes)) {
+            var child = d3NodeFrom(edge.from, vertexD3Nodes);
+            d3Node.children.push(child);
+            d3Nodes.push(child);
+          } else if (!(edge.to.id in vertexD3Nodes)) {
+            var child = d3NodeFrom(edge.to, vertexD3Nodes);
+            d3Node.children.push(child);
+            d3Nodes.push(child);
+          }
+        }
+      }
+      
+      // Use D3's tree layout engine for the heavy lifting. See its API reference at
+      // https://github.com/mbostock/d3/wiki/Tree-Layout for more information.
+      var tree = d3.layout.tree().nodeSize([VERTEX_SPACING, VERTEX_SPACING]).sort(compareLabels);
+      d3Nodes = tree.nodes(root);
+
+      // Rearrange the vertices according to D3's results.
+      for (var i = 0; i < d3Nodes.length; ++i) {
+        var d3Node = d3Nodes[i];
+        d3Node.vertex.x = d3Node.x + rootX;
+        d3Node.vertex.y = d3Node.y + rootY;
+      }
+
+      // Fix the edges altered by previous vertex translations.
+      for (var id in edgesVisited) {
+        edgesVisited[id].fix();
+      }
+
+
+      function d3NodeFrom(vertex, vertexD3Nodes) {
+        var d3Node = {
+          vertex: vertex,
+          x: vertex.x,
+          y: vertex.y,
+          children: [],
+          label: vertex.label,
+        };
+        vertexD3Nodes[vertex.id] = d3Node;
+        return d3Node;
+      }
+
+      function compareLabels(a, b) {
+        return a.label < b.label ? 1 : (a.label > b.label ? -1 : 0);
+      }
+    }
+
+    function arrangeAsRadialTree() {
       // TODO
     }
 
@@ -169,13 +236,14 @@
 
       // Use D3's efficient force layout engine for the heavy lifting. See its API reference at
       // https://github.com/mbostock/d3/wiki/Force-Layout for more information.
-      var force = d3.layout.force()
+      d3.layout.force()
           .nodes(d3Nodes)
           .links(d3Links)
           .linkDistance(VERTEX_SPACING)
           .charge(-500)
           .on('tick', onTick)
           .start();
+
 
       function onTick() {
         $scope.$apply(function () {
