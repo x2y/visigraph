@@ -27,6 +27,7 @@
     var isMouseDown = false;
 
     var vm = this;
+    vm.urlPath = $state.href($state.current);  // See https://github.com/meanjs/mean/issues/1224
     vm.graph = graph;
     vm.transform = [[1, 0, 0],
                     [0, 1, 0],
@@ -229,7 +230,7 @@
           for (var i = 0; i < selectedVertices.length; ++i) {
             vm.graph.addEdge({
               from: selectedVertices[i],
-              to: vertex
+              to: vertex,
             });
             selectedVertices[i].isSelected = false;
           }
@@ -311,7 +312,7 @@
             for (var i = 0; i < selectedVertices.length; ++i) {
               vm.graph.addEdge({
                 from: selectedVertices[i],
-                to: vertex
+                to: vertex,
               });
               selectedVertices[i].isSelected = false;
             }

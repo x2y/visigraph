@@ -19,11 +19,18 @@
         ng-mousemove="vm.onViewportMousemove($event)"
         ng-mouseup="vm.onViewportMouseup($event)"
         ng-dblclick="vm.onViewportDblClick($event)">
+      <defs>
+        <marker ng-if="::vm.graph.allowDirectedEdges" id="arrow" orient="auto"
+            refX="10" refY="4" markerWidth="10" markerHeight="8">
+          <path d="M-.5,1 L8,4 L-.5,7 z"/>
+        </marker>
+      </defs>
       <g ng-attr-transform="{{vm.transform | svgMatrix}}">
         <!-- Edges -->
         <g ng-repeat="(id, edge) in vm.graph.edges track by id"
             ng-attr-class="{{'edge' + (edge.isSelected ? ' selected' : '')}}">
           <path ng-attr-stroke="{{edge.color}}" ng-attr-stroke-width="{{edge.thickness}}"
+              ng-attr-marker-end="{{::edge.isDirected ? 'url(' + vm.urlPath + '#arrow)' : null}}"
               ng-attr-d="M{{edge.from.x}},{{edge.from.y}}
                          {{edge.handleX}},{{edge.handleY}}
                          {{edge.to.x}},{{edge.to.y}}">

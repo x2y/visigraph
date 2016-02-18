@@ -3,6 +3,7 @@
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+  background: #fff;
   cursor: default;
   height: 500px;
   outline: 1px solid #ddd;
@@ -19,6 +20,10 @@
     stroke: #00007F; }
   .viewport .edge.selected circle {
     fill: #00007F; }
+  .viewport #arrow {
+    fill: #444;
+    stroke-width: .5;
+    stroke: #fff; }
   .viewport .caption circle {
     r: 2.625; }
   .viewport .caption.selected circle {

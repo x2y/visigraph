@@ -191,6 +191,7 @@
         return;
       }
 
+      edge.isDirected = this.allowDirectedEdges;
       this.edges[edge.id] = edge;
       edge.from.edges[edge.id] = edge;
       edge.to.edges[edge.id] = edge;
