@@ -281,8 +281,18 @@
           e.stopPropagation();
           break;
         case Tool.GRAPH:
-          if (!vm.graph.hasSelectedVertices()) {
+          var selectedVertices = vm.graph.getSelectedVertices();
+          if (selectedVertices.length == 0) {
             vertex.isSelected = true;
+            e.stopPropagation();
+          } else if (vm.graph.allowLoops && vertex.isSelected) {
+            for (var i = 0; i < selectedVertices.length; ++i) {
+              vm.graph.addEdge({
+                from: selectedVertices[i],
+                to: vertex,
+              });
+              selectedVertices[i].isSelected = false;
+            }
             e.stopPropagation();
           }
           break;
