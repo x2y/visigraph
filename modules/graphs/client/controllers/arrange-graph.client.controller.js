@@ -69,9 +69,9 @@
         }
       }
 
-      // Fix the edges altered by previous vertex translations.
+      // Reset the edges altered by previous vertex translations.
       for (var id in incidentEdges) {
-        incidentEdges[id].fix();
+        incidentEdges[id].reset();
       }
     }
 
@@ -123,9 +123,9 @@
         }
       }
 
-      // Fix the edges altered by previous vertex translations.
+      // Reset the edges altered by previous vertex translations.
       for (var id in incidentEdges) {
-        incidentEdges[id].fix();
+        incidentEdges[id].reset();
       }
     }
 
@@ -170,9 +170,9 @@
         applyFn(d3Nodes[i], rootX, rootY);
       }
 
-      // Fix the edges altered by previous vertex translations.
+      // Reset the edges altered by previous vertex translations.
       for (var id in edgesVisited) {
-        edgesVisited[id].fix();
+        edgesVisited[id].reset();
       }
 
 
@@ -267,7 +267,7 @@
           }
 
           for (var i = 0; i < d3Links.length; ++i) {
-            d3Links[i].edge.fix();
+            d3Links[i].edge.reset();
           }
         });
       }

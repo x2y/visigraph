@@ -324,7 +324,7 @@
 
       // Fix the edges altered by previous vertex translations, but not themselves translated.
       for (var id in incidentUntranslatedEdges) {
-        incidentUntranslatedEdges[id].fix();
+        incidentUntranslatedEdges[id].update();
       }
 
       // Translate the specified captions.
@@ -383,12 +383,28 @@
     this.isSelected = opt_data.isSelected || false;
     this.weight = opt_data.weight || 1;
     this.thickness = opt_data.thickness || 1.5;
-    this.fix();
+    this.update();
   }
 
-  Edge.prototype.fix = function () {
-    this.handleX = (this.from.x + this.to.x) / 2;
-    this.handleY = (this.from.y + this.to.y) / 2;
+  Edge.prototype.update = function () {
+    if (this.from == this.to) {
+      this.handleX = this.from.x + 50;
+      this.handleY = this.from.y;
+    } else {
+      this.handleX = (this.from.x + this.to.x) / 2;
+      this.handleY = (this.from.y + this.to.y) / 2;  
+    }
+  };
+
+  Edge.prototype.reset = function () {
+    if (this.from == this.to) {
+      this.handleX = this.from.x + 50;
+      this.handleY = this.from.y;
+    } else {
+      this.handleX = (this.from.x + this.to.x) / 2;
+      this.handleY = (this.from.y + this.to.y) / 2;  
+      this.isLinear = true;
+    }
   };
 
   Edge.prototype.toSerializable = function () {
