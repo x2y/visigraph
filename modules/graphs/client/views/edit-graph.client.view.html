@@ -20,7 +20,7 @@
         ng-mouseup="vm.onViewportMouseup($event)"
         ng-dblclick="vm.onViewportDblClick($event)">
       <defs>
-        <marker ng-if="::vm.graph.allowDirectedEdges" id="arrow" orient="auto"
+        <marker ng-if="::vm.graph.allowDirectedEdges" id="arrow" class="arrow" orient="auto"
             refX="10" refY="4" markerWidth="10" markerHeight="8">
           <path d="M-.5,1 L8,4 L-.5,7 z"/>
         </marker>
@@ -32,17 +32,17 @@
           <path ng-attr-stroke="{{edge.color}}" ng-attr-stroke-width="{{edge.thickness}}"
               ng-attr-marker-end="{{::edge.isDirected ? 'url(' + vm.urlPath + '#arrow)' : null}}"
               ng-attr-d="M{{edge.from.x}},{{edge.from.y}}
-                         {{edge.handleX}},{{edge.handleY}}
+                         {{edge.handle.x}},{{edge.handle.y}}
                          {{edge.to.x}},{{edge.to.y}}">
             <title ng-if="edge.label">{{edge.label}}</title>
           </path>
           <circle ng-attr-r="{{1.75 * edge.thickness}}" ng-attr-fill="{{edge.color}}"
-              ng-attr-cx="{{edge.handleX}}" ng-attr-cy="{{edge.handleY}}"
+              ng-attr-cx="{{edge.handle.x}}" ng-attr-cy="{{edge.handle.y}}"
               ng-mousedown="vm.onEdgeMousedown(edge, $event)">
           </circle>
           <text ng-if="edge.label"
-              ng-attr-x="{{edge.handleX + 1.75 * edge.thickness + 1}}"
-              ng-attr-y="{{edge.handleY + 1.75 * edge.thickness + 1}}">
+              ng-attr-x="{{edge.handle.x + 1.75 * edge.thickness + 1}}"
+              ng-attr-y="{{edge.handle.y + 1.75 * edge.thickness + 1}}">
             {{edge.label}}
           </text>
         </g>

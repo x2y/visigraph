@@ -28,7 +28,7 @@
 
       // Sort the vertices by angle around the centroid.
       vertices.sort(function (a, b) {
-        return a.angleFrom(centroid.x, centroid.y) - b.angleFrom(centroid.x, centroid.y);
+        return a.getAngleFrom(centroid) - b.getAngleFrom(centroid);
       });
 
       // Fix the edge-case where the last vertex is actually closer to the 0-angle than the first
@@ -49,8 +49,8 @@
       // that degenerate condition by using the closest vertex to the 0-angle (rather than the
       // lowest angle) so that the moved vertex snaps back to its original position and no other
       // vertices move relative to the centroid.
-      if (-vertices[0].angleFrom(centroid.x, centroid.y) <
-          vertices[vertices.length - 1].angleFrom(centroid.x, centroid.y)) {
+      if (-vertices[0].getAngleFrom(centroid) <
+          vertices[vertices.length - 1].getAngleFrom(centroid)) {
         vertices.unshift(vertices.pop());
       }
 
@@ -237,8 +237,8 @@
         var edge = graph.edges[id];
         var source = vertexD3Nodes[edge.from.id];
         var target = vertexD3Nodes[edge.to.id];
-        if (source === target || (source.fixed && target.fixed)) {
-          continue;  // No sense wasting computations on loops and links between fixed nodes.
+        if (source.fixed && target.fixed) {
+          continue;  // No sense wasting computations links between fixed nodes.
         }
         d3Links.push({
           edge: edge,

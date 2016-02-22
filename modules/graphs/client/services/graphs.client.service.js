@@ -7,6 +7,10 @@
 
   GraphsService.$inject = ['$resource', '$http'];
 
+
+  var EDGE_SNAP_MARGIN_RATIO = 0.05;
+
+
   function GraphsService($resource, $http) {
     var chainedTransformRequest =
         chainTransform(transformRequest, $http.defaults.transformRequest);
@@ -179,10 +183,10 @@
     function addEdge(edge) {
       /* jshint validthis: true */
       if (!(edge instanceof Edge)) {
-        if (!edge.from && edge.fromId != null) {
+        if (!edge.from && edge.fromId !== null) {
           edge.from = this.vertices[edge.fromId];
         }
-        if (!edge.to && edge.toId != null) {
+        if (!edge.to && edge.toId !== null) {
           edge.to = this.vertices[edge.toId];
         }
         edge = new Edge(edge);
@@ -304,27 +308,27 @@
       }
 
       // Translate the specified vertices.
-      var incidentUntranslatedEdges = {};
+      var edgesToUpdate = {};
       for (var i = 0; i < opt_vertices.length; ++i) {
         var vertex = opt_vertices[i];
         vertex.x += x;
         vertex.y += y;
         for (var id in vertex.edges) {
-          incidentUntranslatedEdges[id] = vertex.edges[id];
+          edgesToUpdate[id] = vertex.edges[id];
         }
       }
 
       // Translate the specified edges.
       for (var i = 0; i < opt_edges.length; ++i) {
         var edge = opt_edges[i];
-        edge.handleX += x;
-        edge.handleY += y;
-        delete incidentUntranslatedEdges[edge.id];
+        edge.handle.x += x;
+        edge.handle.y += y;
+        edgesToUpdate[edge.id] = edge;
       }
 
-      // Fix the edges altered by previous vertex translations, but not themselves translated.
-      for (var id in incidentUntranslatedEdges) {
-        incidentUntranslatedEdges[id].update();
+      // Fix the edges altered by previous vertex translations.
+      for (var id in edgesToUpdate) {
+        edgesToUpdate[id].update();
       }
 
       // Translate the specified captions.
@@ -350,8 +354,8 @@
     this.weight = opt_data.weight || 1;
   }
 
-  Vertex.prototype.angleFrom = function (x, y) {
-    return Math.atan2(this.y - y, this.x - x);
+  Vertex.prototype.getAngleFrom = function (point) {
+    return getAngle(point, this);
   };
 
   Vertex.prototype.toSerializable = function () {
@@ -374,37 +378,107 @@
     this.isDirected = opt_data.isDirected || false;
     this.from = opt_data.from || null;
     this.to = opt_data.to || null;
-    this.isLinear = opt_data.isLinear || true;
-    this.handleX = opt_data.handleX || 0;
-    this.handleY = opt_data.handleY || 0;
+    this.isLinear = opt_data.isLinear || !(this.from && this.from === this.to);
+    this.handle = {
+      x: (opt_data.handle || {}).x || 0,
+      y: (opt_data.handle || {}).y || 0,
+    };
     this.label = opt_data.label || '';
     this.radius = opt_data.radius || 10;
     this.color = opt_data.color || '#444';
     this.isSelected = opt_data.isSelected || false;
     this.weight = opt_data.weight || 1;
     this.thickness = opt_data.thickness || 1.5;
-    this.update();
+
+    // Initialize to NaN so that we're sure they'll be updated.
+    this._lastFrom = { x: NaN, y: NaN };
+    this._lastTo = { x: NaN, y: NaN };
+    this._lastHandle = { x: NaN, y: NaN };
+
+    this.reset();
   }
 
-  Edge.prototype.update = function () {
-    if (this.from == this.to) {
-      this.handleX = this.from.x + 50;
-      this.handleY = this.from.y;
-    } else {
-      this.handleX = (this.from.x + this.to.x) / 2;
-      this.handleY = (this.from.y + this.to.y) / 2;  
-    }
-  };
-
   Edge.prototype.reset = function () {
-    if (this.from == this.to) {
-      this.handleX = this.from.x + 50;
-      this.handleY = this.from.y;
+    if (this.from === this.to) {
+      this.handle.x = this.from.x + 50;
+      this.handle.y = this.from.y;
     } else {
-      this.handleX = (this.from.x + this.to.x) / 2;
-      this.handleY = (this.from.y + this.to.y) / 2;  
+      this.handle = getMidpoint(this.from, this.to);
       this.isLinear = true;
     }
+
+    this._updateLastPoints();
+  };
+
+  Edge.prototype.update = function () {
+    var hasVertexTranslated = (this.from.x !== this._lastFrom.x) ||
+                              (this.from.y !== this._lastFrom.y) ||
+                              (this.to.x !== this._lastTo.x) ||
+                              (this.to.y !== this._lastTo.y);
+    var hasHandleTranslated = (this.handle.x !== this._lastHandle.x) ||
+                              (this.handle.y !== this._lastHandle.y);
+    if (!hasVertexTranslated && !hasHandleTranslated) {
+      return;
+    }
+
+    if (hasVertexTranslated && !hasHandleTranslated) {
+      if (this.from === this.to) {
+        this.handle.x += this.from.x - this._lastFrom.x;
+        this.handle.y += this.from.y - this._lastFrom.y;
+      } else {
+        var oldLength = getDistance(this._lastFrom, this._lastTo);
+        var oldLineAngle = getAngle(this._lastFrom, this._lastTo);
+        var oldMidpoint = getMidpoint(this._lastFrom, this._lastTo);
+        var oldHandleRadiusRatio = getDistance(oldMidpoint, this.handle) / oldLength;
+        var oldHandleAngle = getAngle(oldMidpoint, this.handle) - oldLineAngle;
+
+        var newLength = getDistance(this.from, this.to);
+        var newLineAngle = getAngle(this.from, this.to);
+        var newMidpoint = getMidpoint(this.from, this.to);
+        var newHandleRadius = oldHandleRadiusRatio * newLength;
+        var newHandleAngle = oldHandleAngle + newLineAngle;
+
+        this.handle.x = newMidpoint.x + newHandleRadius * Math.cos(newHandleAngle);
+        this.handle.y = newMidpoint.y + newHandleRadius * Math.sin(newHandleAngle);
+      }
+    }
+
+    this._recalculate();
+  };
+
+  Edge.prototype._recalculate = function () {
+    if (this.from === this.to) {
+      this.isLinear = false;
+    } else {
+      var length = getDistance(this.from, this.to);
+      var handleDistance = getDistanceToLineSegment(this.handle, this.from, this.to);
+      var snapMargin = EDGE_SNAP_MARGIN_RATIO * length;
+      this.isLinear = handleDistance <= snapMargin;
+    }
+
+    if (!this.isLinear) {
+      this._recalculateCenter();
+      this._recalculateArc();
+    }
+
+    this._updateLastPoints();
+  };
+
+  Edge.prototype._recalculateCenter = function () {
+    // TODO
+  };
+
+  Edge.prototype._recalculateArc = function () {
+    // TODO
+  };
+
+  Edge.prototype._updateLastPoints = function () {
+    this._lastFrom.x = this.from.x;
+    this._lastFrom.y = this.from.y;
+    this._lastTo.x = this.to.x;
+    this._lastTo.y = this.to.y;
+    this._lastHandle.x = this.handle.x;
+    this._lastHandle.y = this.handle.y;
   };
 
   Edge.prototype.toSerializable = function () {
@@ -414,8 +488,7 @@
       fromId:     this.from.id,
       toId:       this.to.id,
       isLinear:   this.isLinear,
-      handleX:    this.handleX,
-      handleY:    this.handleY,
+      handle:     this.handle,
       label:      this.label,
       radius:     this.radius,
       color:      this.color,
@@ -457,5 +530,37 @@
       id += chars[Math.floor(Math.random() * 64)];
     }
     return id;
+  }
+
+  function getDistance(from, to) {
+    return Math.sqrt(getDistanceSq(from, to));
+  }
+
+  function getDistanceSq(from, to) {
+    return Math.pow(to.x - from.x, 2) + Math.pow(to.y - from.y, 2);
+  }
+
+  function getDistanceToLineSegment(point, from, to) {
+    // This technique has been adapted from http://goo.gl/WsnSI.
+    var lengthSq = getDistanceSq(from, to);
+    if (lengthSq === 0) {
+      return getDistanceSq(point, from);
+    }
+
+    var t = ((point.x - from.x) * (to.x - from.x) +
+             (point.y - from.y) * (to.y - from.y)) / lengthSq;
+    t = Math.max(0, Math.min(1, t));
+    return getDistance(point, {
+      x: from.x + t * (to.x - from.x),
+      y: from.y + t * (to.y - from.y),
+    });
+  }
+
+  function getMidpoint(from, to) {
+    return { x: (from.x + to.x) / 2, y: (from.y + to.y) / 2 };
+  }
+
+  function getAngle(from, to) {
+    return Math.atan2(to.y - from.y, to.x - from.x);
   }
 })();

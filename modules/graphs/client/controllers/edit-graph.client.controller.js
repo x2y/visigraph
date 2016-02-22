@@ -282,7 +282,7 @@
           break;
         case Tool.GRAPH:
           var selectedVertices = vm.graph.getSelectedVertices();
-          if (selectedVertices.length == 0) {
+          if (selectedVertices.length === 0) {
             vertex.isSelected = true;
             e.stopPropagation();
           } else if (vm.graph.allowLoops && vertex.isSelected) {
