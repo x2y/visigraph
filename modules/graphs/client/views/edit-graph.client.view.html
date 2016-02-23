@@ -31,9 +31,7 @@
             ng-attr-class="{{'edge' + (edge.isSelected ? ' selected' : '')}}">
           <path ng-attr-stroke="{{edge.color}}" ng-attr-stroke-width="{{edge.thickness}}"
               ng-attr-marker-end="{{::edge.isDirected ? 'url(' + vm.urlPath + '#arrow)' : null}}"
-              ng-attr-d="M{{edge.from.x}},{{edge.from.y}}
-                         {{edge.handle.x}},{{edge.handle.y}}
-                         {{edge.to.x}},{{edge.to.y}}">
+              ng-attr-d="{{edge | edgePath}}">
             <title ng-if="edge.label">{{edge.label}}</title>
           </path>
           <circle ng-attr-r="{{1.75 * edge.thickness}}" ng-attr-fill="{{edge.color}}"

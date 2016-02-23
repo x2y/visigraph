@@ -9,6 +9,7 @@
 
 
   var EDGE_SNAP_MARGIN_RATIO = 0.05;
+  var LOOP_DIAMETER = 50;
 
 
   function GraphsService($resource, $http) {
@@ -379,10 +380,7 @@
     this.from = opt_data.from || null;
     this.to = opt_data.to || null;
     this.isLinear = opt_data.isLinear || !(this.from && this.from === this.to);
-    this.handle = {
-      x: (opt_data.handle || {}).x || 0,
-      y: (opt_data.handle || {}).y || 0,
-    };
+    this.handle = opt_data.handle || { x: NaN, y: NaN };
     this.label = opt_data.label || '';
     this.radius = opt_data.radius || 10;
     this.color = opt_data.color || '#444';
@@ -391,23 +389,29 @@
     this.thickness = opt_data.thickness || 1.5;
 
     // Initialize to NaN so that we're sure they'll be updated.
+    this._radius = NaN;
+    this._isLargeArc = false;
+    this._isPositiveArc = false;
     this._lastFrom = { x: NaN, y: NaN };
     this._lastTo = { x: NaN, y: NaN };
     this._lastHandle = { x: NaN, y: NaN };
 
-    this.reset();
+    if (Number.isNaN(this.handle.x) || Number.isNaN(this.handle.y)) {
+      this.reset();
+    } else {
+      this.update();
+    }
   }
 
   Edge.prototype.reset = function () {
     if (this.from === this.to) {
-      this.handle.x = this.from.x + 50;
+      this.handle.x = this.from.x + LOOP_DIAMETER;
       this.handle.y = this.from.y;
     } else {
       this.handle = getMidpoint(this.from, this.to);
-      this.isLinear = true;
     }
 
-    this._updateLastPoints();
+    this._recalculate();
   };
 
   Edge.prototype.update = function () {
@@ -457,19 +461,45 @@
     }
 
     if (!this.isLinear) {
-      this._recalculateCenter();
       this._recalculateArc();
     }
 
     this._updateLastPoints();
   };
 
-  Edge.prototype._recalculateCenter = function () {
-    // TODO
-  };
-
   Edge.prototype._recalculateArc = function () {
-    // TODO
+    if (this.from === this.to) {
+      this._radius = getDistance(this.from, this.handle) / 2;
+      this._isPositiveArc = true;
+      this._isLargeArc = true;
+      return;
+    }
+    
+    // Center-finding math from http://goo.gl/TwvDa4.
+    var m = [
+      (this.from.y - this.handle.y) / (this.from.x - this.handle.x),
+      (this.to.y - this.handle.y) / (this.to.x - this.handle.x),
+    ];
+    var center = { x: 0, y: 0 };
+    center.x = (m[0] * m[1] * (this.to.y - this.from.y) +
+                m[0] * (this.handle.x + this.to.x) -
+                m[1] * (this.from.x + this.handle.x)) /
+               (2 * (m[0] - m[1]));
+    center.y = (-1 / m[0]) * (center.x - (this.from.x + this.handle.x) / 2) +
+               (this.from.y + this.handle.y) / 2;
+    this._radius = getDistance(this.handle, center);
+    
+    var fromAngle = getAngle(center, this.from);
+    var handleAngle = getAngle(center, this.handle) - fromAngle ;
+    var toAngle = getAngle(center, this.to) - fromAngle;
+
+    while (handleAngle < 0) handleAngle += 2 * Math.PI;
+    while (handleAngle > 2 * Math.PI) handleAngle -= 2 * Math.PI;
+    while (toAngle < 0) toAngle += 2 * Math.PI;
+    while (toAngle > 2 * Math.PI) toAngle -= 2 * Math.PI;
+
+    this._isPositiveArc = handleAngle < toAngle;
+    this._isLargeArc = this._isPositiveArc ^ (toAngle < Math.PI);
   };
 
   Edge.prototype._updateLastPoints = function () {

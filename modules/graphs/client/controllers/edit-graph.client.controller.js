@@ -186,7 +186,7 @@
           }
           for (var id in vm.graph.edges) {
             var edge = vm.graph.edges[id];
-            if (isPointInRect(edge.handleX, edge.handleY, svgSelectionStartPoint,
+            if (isPointInRect(edge.handle.x, edge.handle.y, svgSelectionStartPoint,
                               svgSelectionEndPoint)) {
               switch (vm.tool) {
                 case Tool.CURSOR:
