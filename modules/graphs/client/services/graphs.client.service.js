@@ -8,7 +8,7 @@
   GraphsService.$inject = ['$resource', '$http'];
 
 
-  var EDGE_SNAP_MARGIN_RATIO = 0.05;
+  var EDGE_SNAP_MARGIN_RATIO = 0.02;
   var LOOP_DIAMETER = 50;
 
 
@@ -70,6 +70,7 @@
     Resource.prototype.hasSelectedCaptions = hasSelectedCaptions;
     Resource.prototype.getSelectedCaptions = getSelectedCaptions;
     Resource.prototype.translateElements = translateElements;
+    Resource.prototype.releaseElements = releaseElements;
 
     Resource.Vertex = Vertex;
     Resource.Edge = Edge;
@@ -300,7 +301,7 @@
       return getSelectedElements(this.captions);
     }
 
-    function translateElements(x, y, opt_vertices, opt_edges, opt_captions) {
+    function translateElements(x, y, opt_vertices, opt_edges, opt_captions, opt_suspendRelease) {
       /* jshint validthis: true */
       if (opt_vertices == null && opt_edges == null && opt_captions == null) {
         opt_vertices = this.getSelectedVertices();
@@ -337,6 +338,20 @@
         var caption = opt_captions[i];
         caption.x += x;
         caption.y += y;
+      }
+
+      if (!opt_suspendRelease) {
+        this.releaseElements(opt_edges);
+      }
+    }
+
+    function releaseElements(opt_edges) {
+      if (opt_edges == null) {
+        opt_edges = this.getSelectedEdges();
+      }
+
+      for (var i = 0; i < opt_edges.length; ++i) {
+        opt_edges[i].release();
       }
     }
   }
@@ -450,12 +465,18 @@
     this._recalculate();
   };
 
+  Edge.prototype.release = function () {
+    if (this.isLinear) {
+      this.handle = getMidpoint(this.from, this.to);
+    }
+  };
+
   Edge.prototype._recalculate = function () {
     if (this.from === this.to) {
       this.isLinear = false;
     } else {
       var length = getDistance(this.from, this.to);
-      var handleDistance = getDistanceToLineSegment(this.handle, this.from, this.to);
+      var handleDistance = getDistanceToLine(this.handle, this.from, this.to);
       var snapMargin = EDGE_SNAP_MARGIN_RATIO * length;
       this.isLinear = handleDistance <= snapMargin;
     }
@@ -570,20 +591,14 @@
     return Math.pow(to.x - from.x, 2) + Math.pow(to.y - from.y, 2);
   }
 
-  function getDistanceToLineSegment(point, from, to) {
+  function getDistanceToLine(point, from, to) {
     // This technique has been adapted from http://goo.gl/WsnSI.
-    var lengthSq = getDistanceSq(from, to);
-    if (lengthSq === 0) {
-      return getDistanceSq(point, from);
-    }
+    var dx = (to.x - from.x);
+    var dy = (to.y - from.y);
 
-    var t = ((point.x - from.x) * (to.x - from.x) +
-             (point.y - from.y) * (to.y - from.y)) / lengthSq;
-    t = Math.max(0, Math.min(1, t));
-    return getDistance(point, {
-      x: from.x + t * (to.x - from.x),
-      y: from.y + t * (to.y - from.y),
-    });
+    var distance = Math.abs(dy * point.x - dx * point.y - from.x * to.y + to.x * from.y) /
+                   Math.sqrt(dx * dx + dy * dy);
+    return Number.isFinite(distance) ? distance : getDistance(point, to);
   }
 
   function getMidpoint(from, to) {

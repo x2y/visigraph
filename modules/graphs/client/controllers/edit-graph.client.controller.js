@@ -136,7 +136,8 @@
               (vm.graph.hasSelectedVertices() || vm.graph.hasSelectedEdges() ||
                vm.graph.hasSelectedCaptions())) {
             var scale = vm.transform[0][0];
-            vm.graph.translateElements(e.movementX / scale, e.movementY / scale);
+            vm.graph.translateElements(e.movementX / scale, e.movementY / scale,
+                                       null, null, null, true);
             vm.selectionEndPoint = { x: mousePoint.x, y: mousePoint.y };
           } else {
             vm.selectionEndPoint = { x: mousePoint.x, y: mousePoint.y };
@@ -159,6 +160,11 @@
       var svgPoint = invertPoint(vm.transform, mousePoint.x, mousePoint.y);
       switch (vm.tool) {
         case Tool.CURSOR:
+          if (!vm.isSelectionShown) {
+            vm.graph.releaseElements();
+            break;
+          }
+          // Allow fall-through.
         case Tool.CUT:
         case Tool.PAINT:
           if (!vm.isSelectionShown) {
