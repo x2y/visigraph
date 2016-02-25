@@ -1,5 +1,10 @@
 $fast: 300ms;
 $slow: $fast * 2;
+$viewport-background: #fff;
+$default-fill: #ddd;
+$default-stroke: #444;
+$selected-fill: #9494CE;
+$selected-stroke: #00007F;
 
 @mixin user-select($user-select) {
   -webkit-user-select: $user-select;
@@ -10,7 +15,7 @@ $slow: $fast * 2;
 
 .viewport {
   @include user-select(none);
-  background: #fff;
+  background: $viewport-background;
   cursor: default;
   height: 500px;
   outline: 1px solid #ddd;
@@ -19,13 +24,13 @@ $slow: $fast * 2;
   .vertex {
     circle {
       stroke-width: 1px;
-      stroke: #000;
+      stroke: $default-stroke;
     }
 
     &.selected {
       circle {
-        fill: #9494CE;
-        stroke: #00007F;
+        fill: $selected-fill;
+        stroke: $selected-stroke;
       }
     }
   }
@@ -34,22 +39,22 @@ $slow: $fast * 2;
     path { fill: none; }
 
     &.selected {
-      path { stroke: #00007F; }
-      circle { fill: #00007F; }
+      path { stroke: $selected-stroke; }
+      circle { fill: $selected-stroke; }
     }    
   }
 
   .arrow {
-    fill: #444;
+    fill: $default-stroke;
     stroke-width: .5;
-    stroke: #fff;
+    stroke: $viewport-background;
   }
 
   .caption {
     circle { r: 2.625; }
 
     &.selected {
-      circle { fill: #00007F; }
+      circle { fill: $selected-stroke; }
     }
   }
 
@@ -58,11 +63,11 @@ $slow: $fast * 2;
   .caption {
     text {
       dominant-baseline: hanging;
-      fill: #444;
+      fill: $default-stroke;
     }
 
     &.selected {
-      text { fill: #00007F; }
+      text { fill: $selected-stroke; }
     }
   }
 
@@ -72,7 +77,7 @@ $slow: $fast * 2;
     pointer-events: none;
     stroke-linejoin: miter;
     stroke-width: 1;
-    stroke: #00007F;
+    stroke: $selected-stroke;
     transition: opacity $fast;
 
     &.shown {

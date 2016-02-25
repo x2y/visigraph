@@ -10,7 +10,7 @@
   width: 100%; }
   .viewport .vertex circle {
     stroke-width: 1px;
-    stroke: #000; }
+    stroke: #444; }
   .viewport .vertex.selected circle {
     fill: #9494CE;
     stroke: #00007F; }
