@@ -15,6 +15,8 @@
     var graph = $scope.vm.graph;
 
     var vm = this;
+    vm.isArranging = false;
+
     vm.arrangeAsCircle = arrangeAsCircle;
     vm.arrangeAsGrid = arrangeAsGrid;
     vm.arrangeAsLinearTree = arrangeAsLinearTree;
@@ -249,12 +251,14 @@
 
       // Use D3's efficient force layout engine for the heavy lifting. See its API reference at
       // https://github.com/mbostock/d3/wiki/Force-Layout for more information.
+      vm.isArranging = true;
       d3.layout.force()
           .nodes(d3Nodes)
           .links(d3Links)
           .linkDistance(VERTEX_SPACING)
           .charge(-500)
           .on('tick', onTick)
+          .on('end', onEnd)
           .start();
 
 
@@ -269,6 +273,12 @@
           for (var i = 0; i < d3Links.length; ++i) {
             d3Links[i].edge.reset();
           }
+        });
+      }
+
+      function onEnd() {
+        $scope.$apply(function () {
+          vm.isArranging = false;
         });
       }
     }
