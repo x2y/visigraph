@@ -164,7 +164,7 @@
             vm.graph.releaseElements();
             break;
           }
-          // Allow fall-through.
+          /* falls through */
         case Tool.CUT:
         case Tool.PAINT:
           if (!vm.isSelectionShown) {

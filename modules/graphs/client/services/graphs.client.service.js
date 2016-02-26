@@ -346,6 +346,7 @@
     }
 
     function releaseElements(opt_edges) {
+      /* jshint validthis: true */
       if (opt_edges == null) {
         opt_edges = this.getSelectedEdges();
       }
