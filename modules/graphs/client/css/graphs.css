@@ -1,3 +1,61 @@
+.btn-toolbar {
+  display: inline-block; }
+  .btn-toolbar .btn-group {
+    margin-bottom: 5px; }
+  .btn-toolbar .icon {
+    height: 24px;
+    width: 24px; }
+  .btn-toolbar .align-horizontally-icon {
+    background: url("/modules/graphs/client/img/align-horizontally.svg"); }
+  .btn-toolbar .align-vertically-icon {
+    background: url("/modules/graphs/client/img/align-vertically.svg"); }
+  .btn-toolbar .arrange-as-circle-icon {
+    background: url("/modules/graphs/client/img/arrange-as-circle.svg"); }
+  .btn-toolbar .arrange-as-forces-icon {
+    background: url("/modules/graphs/client/img/arrange-as-forces.svg"); }
+  .btn-toolbar .arrange-as-grid-icon {
+    background: url("/modules/graphs/client/img/arrange-as-grid.svg"); }
+  .btn-toolbar .arrange-as-linear-tree-icon {
+    background: url("/modules/graphs/client/img/arrange-as-linear-tree.svg"); }
+  .btn-toolbar .arrange-as-radial-tree-icon {
+    background: url("/modules/graphs/client/img/arrange-as-radial-tree.svg"); }
+  .btn-toolbar .contract-icon {
+    background: url("/modules/graphs/client/img/contract.svg"); }
+  .btn-toolbar .distribute-horizontally-icon {
+    background: url("/modules/graphs/client/img/distribute-horizontally.svg"); }
+  .btn-toolbar .distribute-vertically-icon {
+    background: url("/modules/graphs/client/img/distribute-vertically.svg"); }
+  .btn-toolbar .expand-icon {
+    background: url("/modules/graphs/client/img/expand.svg"); }
+  .btn-toolbar .fit-graph-icon {
+    background: url("/modules/graphs/client/img/fit-graph.svg"); }
+  .btn-toolbar .flip-horizontally-icon {
+    background: url("/modules/graphs/client/img/flip-horizontally.svg"); }
+  .btn-toolbar .flip-vertically-icon {
+    background: url("/modules/graphs/client/img/flip-vertically.svg"); }
+  .btn-toolbar .reset-zoom-icon {
+    background: url("/modules/graphs/client/img/reset-zoom.svg"); }
+  .btn-toolbar .rotate-left-icon {
+    background: url("/modules/graphs/client/img/rotate-left.svg"); }
+  .btn-toolbar .rotate-right-icon {
+    background: url("/modules/graphs/client/img/rotate-right.svg"); }
+  .btn-toolbar .toggle-caption-handles-icon {
+    background: url("/modules/graphs/client/img/toggle-caption-handles.svg"); }
+  .btn-toolbar .toggle-edge-handles-icon {
+    background: url("/modules/graphs/client/img/toggle-edge-handles.svg"); }
+  .btn-toolbar .toggle-edge-labels-icon {
+    background: url("/modules/graphs/client/img/toggle-edge-labels.svg"); }
+  .btn-toolbar .toggle-edge-weights-icon {
+    background: url("/modules/graphs/client/img/toggle-edge-weights.svg"); }
+  .btn-toolbar .toggle-vertex-labels-icon {
+    background: url("/modules/graphs/client/img/toggle-vertex-labels.svg"); }
+  .btn-toolbar .toggle-vertex-weights-icon {
+    background: url("/modules/graphs/client/img/toggle-vertex-weights.svg"); }
+  .btn-toolbar .zoom-in-icon {
+    background: url("/modules/graphs/client/img/zoom-in.svg"); }
+  .btn-toolbar .zoom-out-icon {
+    background: url("/modules/graphs/client/img/zoom-out.svg"); }
+
 .viewport {
   -webkit-user-select: none;
   -moz-user-select: none;

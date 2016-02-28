@@ -3,13 +3,93 @@
     <h1>{{vm.graph.name}}</h1>
   </div>
   <div class="col-md-12">
-    <div ng-controller="ArrangeGraphController as arrangeVm" class="btn-toolbar">
-      <div class="btn-group btn-group-lg">
-        <button class="btn btn-default" ng-click="arrangeVm.arrangeAsCircle()">Circle</button>
-        <button class="btn btn-default" ng-click="arrangeVm.arrangeAsGrid()">Grid</button>
-        <button class="btn btn-default" ng-click="arrangeVm.arrangeAsLinearTree()">Linear tree</button>
-        <button class="btn btn-default" ng-click="arrangeVm.arrangeAsRadialTree()">Radial tree</button>
-        <button class="btn btn-default" ng-disabled="arrangeVm.isArranging" ng-click="arrangeVm.arrangeAsForces()">Forces</button>
+    <div class="btn-toolbar">
+      <div ng-controller="ArrangeGraphController as arrangeVm" class="btn-group btn-group-md">
+        <button class="btn btn-default" ng-click="arrangeVm.arrangeAsCircle()">
+          <div class="icon arrange-as-circle-icon"></div>
+        </button>
+        <button class="btn btn-default" ng-click="arrangeVm.arrangeAsGrid()">
+          <div class="icon arrange-as-grid-icon"></div>
+        </button>
+        <button class="btn btn-default" ng-click="arrangeVm.arrangeAsLinearTree()">
+          <div class="icon arrange-as-linear-tree-icon"></div>
+        </button>
+        <button class="btn btn-default" ng-click="arrangeVm.arrangeAsRadialTree()">
+          <div class="icon arrange-as-radial-tree-icon"></div>
+        </button>
+        <button class="btn btn-default" ng-disabled="arrangeVm.isArranging" ng-click="arrangeVm.arrangeAsForces()">
+          <div class="icon arrange-as-forces-icon"></div>
+        </button>
+      </div>
+      <div ng-controller="AlignGraphController as alignVm" class="btn-group btn-group-md">
+        <button class="btn btn-default" ng-click="alignVm.alignHorizontally()">
+          <div class="icon align-horizontally-icon"></div>
+        </button>
+        <button class="btn btn-default" ng-click="alignVm.alignVertically()">
+          <div class="icon align-vertically-icon"></div>
+        </button>
+        <button class="btn btn-default" ng-click="alignVm.distributeHorizontally()">
+          <div class="icon distribute-horizontally-icon"></div>
+        </button>
+        <button class="btn btn-default" ng-click="alignVm.distributeVertically()">
+          <div class="icon distribute-vertically-icon"></div>
+        </button>
+      </div>
+      <div ng-controller="RotateGraphController as rotateVm" class="btn-group btn-group-md">
+        <button class="btn btn-default" ng-click="rotateVm.rotateLeft()">
+          <div class="icon rotate-left-icon"></div>
+        </button>
+        <button class="btn btn-default" ng-click="rotateVm.rotateRight()">
+          <div class="icon rotate-right-icon"></div>
+        </button>
+        <button class="btn btn-default" ng-click="rotateVm.flipHorizontally()">
+          <div class="icon flip-horizontally-icon"></div>
+        </button>
+        <button class="btn btn-default" ng-click="rotateVm.flipVertically()">
+          <div class="icon flip-vertically-icon"></div>
+        </button>
+      </div>
+      <div ng-controller="ScaleGraphController as scaleVm" class="btn-group btn-group-md">
+        <button class="btn btn-default" ng-click="scaleVm.contract()">
+          <div class="icon contract-icon"></div>
+        </button>
+        <button class="btn btn-default" ng-click="scaleVm.expand()">
+          <div class="icon expand-icon"></div>
+        </button>
+      </div>
+      <div ng-controller="DecorateGraphController as decorateVm" class="btn-group btn-group-md">
+        <button class="btn btn-default" ng-click="decorateVm.toggleVertexLabels()">
+          <div class="icon toggle-vertex-labels-icon"></div>
+        </button>
+        <button class="btn btn-default" ng-click="decorateVm.toggleVertexWeights()">
+          <div class="icon toggle-vertex-weights-icon"></div>
+        </button>
+        <button class="btn btn-default" ng-click="decorateVm.toggleEdgeHandles()">
+          <div class="icon toggle-edge-handles-icon"></div>
+        </button>
+        <button class="btn btn-default" ng-click="decorateVm.toggleEdgeLabels()">
+          <div class="icon toggle-edge-labels-icon"></div>
+        </button>
+        <button class="btn btn-default" ng-click="decorateVm.toggleEdgeWeights()">
+          <div class="icon toggle-edge-weights-icon"></div>
+        </button>
+        <button class="btn btn-default" ng-click="decorateVm.toggleCaptionHandles()">
+          <div class="icon toggle-caption-handles-icon"></div>
+        </button>
+      </div>
+      <div ng-controller="ZoomGraphController as zoomVm" class="btn-group btn-group-md">
+        <button class="btn btn-default" ng-click="zoomVm.fitGraph()">
+          <div class="icon fit-graph-icon"></div>
+        </button>
+        <button class="btn btn-default" ng-click="zoomVm.resetZoom()">
+          <div class="icon reset-zoom-icon"></div>
+        </button>
+        <button class="btn btn-default" ng-click="zoomVm.zoomIn()">
+          <div class="icon zoom-in-icon"></div>
+        </button>
+        <button class="btn btn-default" ng-click="zoomVm.zoomOut()">
+          <div class="icon zoom-out-icon"></div>
+        </button>
       </div>
     </div>
     <br>

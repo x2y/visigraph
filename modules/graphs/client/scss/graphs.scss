@@ -13,6 +13,49 @@ $selected-stroke: #00007F;
           user-select: $user-select;
 }
 
+
+.btn-toolbar {
+  display: inline-block;
+
+  .btn-group {
+    margin-bottom: 5px;
+  }
+  
+  .icon {
+    height: 24px;
+    width: 24px;
+  }
+
+  @mixin icon($name) {
+    .#{$name}-icon { background: url("/modules/graphs/client/img/#{$name}.svg"); }
+  }
+  @include icon('align-horizontally');
+  @include icon('align-vertically');
+  @include icon('arrange-as-circle');
+  @include icon('arrange-as-forces');
+  @include icon('arrange-as-grid');
+  @include icon('arrange-as-linear-tree');
+  @include icon('arrange-as-radial-tree');
+  @include icon('contract');
+  @include icon('distribute-horizontally');
+  @include icon('distribute-vertically');
+  @include icon('expand');
+  @include icon('fit-graph');
+  @include icon('flip-horizontally');
+  @include icon('flip-vertically');
+  @include icon('reset-zoom');
+  @include icon('rotate-left');
+  @include icon('rotate-right');
+  @include icon('toggle-caption-handles');
+  @include icon('toggle-edge-handles');
+  @include icon('toggle-edge-labels');
+  @include icon('toggle-edge-weights');
+  @include icon('toggle-vertex-labels');
+  @include icon('toggle-vertex-weights');
+  @include icon('zoom-in');
+  @include icon('zoom-out');
+}
+
 .viewport {
   @include user-select(none);
   background: $viewport-background;
