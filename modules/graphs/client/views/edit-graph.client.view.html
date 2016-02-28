@@ -160,11 +160,30 @@
       </polygon>
     </svg>
     <br>
-    <label><input type="radio" value="cursor" ng-model="vm.tool"> Cursor</label>
-    <label><input type="radio" value="graph" ng-model="vm.tool"> Graph</label>
-    <label><input type="radio" value="caption" ng-model="vm.tool"> Caption</label>
-    <label><input type="radio" value="cut" ng-model="vm.tool"> Cut</label>
-    <label><input type="radio" value="paint" ng-model="vm.tool"> Paint</label>
+    <div class="btn-toolbar">
+      <div ng-controller="SelectGraphToolController as toolVm" class="btn-group btn-group-md">
+        <button class="btn btn-default" ng-class="{active: vm.tool == 'cursor'}"
+            ng-click="toolVm.selectTool('cursor')">
+          <div class="icon cursor-tool-icon"></div>
+        </button>
+        <button class="btn btn-default" ng-class="{active: vm.tool == 'graph'}"
+            ng-click="toolVm.selectTool('graph')">
+          <div class="icon graph-tool-icon"></div>
+        </button>
+        <button class="btn btn-default" ng-class="{active: vm.tool == 'caption'}"
+            ng-click="toolVm.selectTool('caption')">
+          <div class="icon caption-tool-icon"></div>
+        </button>
+        <button class="btn btn-default" ng-class="{active: vm.tool == 'cut'}"
+            ng-click="toolVm.selectTool('cut')">
+          <div class="icon cut-tool-icon"></div>
+        </button>
+        <button class="btn btn-default" ng-class="{active: vm.tool == 'paint'}"
+            ng-click="toolVm.selectTool('paint')">
+          <div class="icon paint-tool-icon"></div>
+        </button>
+      </div>
+    </div>
     <br>
     <button ng-click="vm.onSave()">Save</button>
   </div>

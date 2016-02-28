@@ -55,6 +55,16 @@
     background: url("/modules/graphs/client/img/zoom-in.svg"); }
   .btn-toolbar .zoom-out-icon {
     background: url("/modules/graphs/client/img/zoom-out.svg"); }
+  .btn-toolbar .cursor-tool-icon {
+    background: url("/modules/graphs/client/img/cursor-tool.svg"); }
+  .btn-toolbar .graph-tool-icon {
+    background: url("/modules/graphs/client/img/graph-tool.svg"); }
+  .btn-toolbar .caption-tool-icon {
+    background: url("/modules/graphs/client/img/caption-tool.svg"); }
+  .btn-toolbar .cut-tool-icon {
+    background: url("/modules/graphs/client/img/cut-tool.svg"); }
+  .btn-toolbar .paint-tool-icon {
+    background: url("/modules/graphs/client/img/paint-tool.svg"); }
 
 .viewport {
   -webkit-user-select: none;

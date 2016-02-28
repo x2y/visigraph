@@ -29,6 +29,8 @@ $selected-stroke: #00007F;
   @mixin icon($name) {
     .#{$name}-icon { background: url("/modules/graphs/client/img/#{$name}.svg"); }
   }
+
+  // Toolbar icons.
   @include icon('align-horizontally');
   @include icon('align-vertically');
   @include icon('arrange-as-circle');
@@ -54,6 +56,13 @@ $selected-stroke: #00007F;
   @include icon('toggle-vertex-weights');
   @include icon('zoom-in');
   @include icon('zoom-out');
+
+  // Tool icons.
+  @include icon('cursor-tool');
+  @include icon('graph-tool');
+  @include icon('caption-tool');
+  @include icon('cut-tool');
+  @include icon('paint-tool');
 }
 
 .viewport {
