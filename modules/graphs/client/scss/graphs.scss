@@ -137,4 +137,11 @@ $selected-stroke: #00007F;
       transition: none;
     }
   }
+
+  &.vertex-labels-hidden .vertex .element-label { display: none; }
+  &.vertex-weights-hidden .vertex .element-weight { display: none; }
+  &.edge-handles-hidden .edge circle { display: none; }
+  &.edge-labels-hidden .edge .element-label { display: none; }
+  &.edge-weights-hidden .edge .element-weight { display: none; }
+  &.caption-handles-hidden .caption circle { display: none; }
 }

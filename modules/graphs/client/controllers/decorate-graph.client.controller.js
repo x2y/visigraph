@@ -21,27 +21,27 @@
 
 
     function toggleVertexLabels() {
-      // TODO
+      $scope.vm.areVertexLabelsShown = !$scope.vm.areVertexLabelsShown;
     }
 
     function toggleVertexWeights() {
-      // TODO
+      $scope.vm.areVertexWeightsShown = !$scope.vm.areVertexWeightsShown;
     }
 
     function toggleEdgeHandles() {
-      // TODO
+      $scope.vm.areEdgeHandlesShown = !$scope.vm.areEdgeHandlesShown;
     }
 
     function toggleEdgeLabels() {
-      // TODO
+      $scope.vm.areEdgeLabelsShown = !$scope.vm.areEdgeLabelsShown;
     }
 
     function toggleEdgeWeights() {
-      // TODO
+      $scope.vm.areEdgeWeightsShown = !$scope.vm.areEdgeWeightsShown;
     }
 
     function toggleCaptionHandles() {
-      // TODO
+      $scope.vm.areCaptionHandlesShown = !$scope.vm.areCaptionHandlesShown;
     }
   }
 })();

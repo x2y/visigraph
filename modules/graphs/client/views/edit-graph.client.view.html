@@ -58,22 +58,28 @@
         </button>
       </div>
       <div ng-controller="DecorateGraphController as decorateVm" class="btn-group btn-group-md">
-        <button class="btn btn-default" ng-click="decorateVm.toggleVertexLabels()">
+        <button class="btn btn-default" ng-class="{active: vm.areVertexLabelsShown}"
+            ng-click="decorateVm.toggleVertexLabels()">
           <div class="icon toggle-vertex-labels-icon"></div>
         </button>
-        <button class="btn btn-default" ng-click="decorateVm.toggleVertexWeights()">
+        <button class="btn btn-default" ng-class="{active: vm.areVertexWeightsShown}"
+            ng-click="decorateVm.toggleVertexWeights()">
           <div class="icon toggle-vertex-weights-icon"></div>
         </button>
-        <button class="btn btn-default" ng-click="decorateVm.toggleEdgeHandles()">
+        <button class="btn btn-default" ng-class="{active: vm.areEdgeHandlesShown}"
+            ng-click="decorateVm.toggleEdgeHandles()">
           <div class="icon toggle-edge-handles-icon"></div>
         </button>
-        <button class="btn btn-default" ng-click="decorateVm.toggleEdgeLabels()">
+        <button class="btn btn-default" ng-class="{active: vm.areEdgeLabelsShown}"
+            ng-click="decorateVm.toggleEdgeLabels()">
           <div class="icon toggle-edge-labels-icon"></div>
         </button>
-        <button class="btn btn-default" ng-click="decorateVm.toggleEdgeWeights()">
+        <button class="btn btn-default" ng-class="{active: vm.areEdgeWeightsShown}"
+            ng-click="decorateVm.toggleEdgeWeights()">
           <div class="icon toggle-edge-weights-icon"></div>
         </button>
-        <button class="btn btn-default" ng-click="decorateVm.toggleCaptionHandles()">
+        <button class="btn btn-default" ng-class="{active: vm.areCaptionHandlesShown}"
+            ng-click="decorateVm.toggleCaptionHandles()">
           <div class="icon toggle-caption-handles-icon"></div>
         </button>
       </div>
@@ -93,7 +99,14 @@
       </div>
     </div>
     <br>
-    <svg class="viewport" tabindex="0"
+    <svg class="viewport" ng-class="{
+          'vertex-labels-hidden': !vm.areVertexLabelsShown,
+          'vertex-weights-hidden': !vm.areVertexWeightsShown,
+          'edge-handles-hidden': !vm.areEdgeHandlesShown,
+          'edge-labels-hidden': !vm.areEdgeLabelsShown,
+          'edge-weights-hidden': !vm.areEdgeWeightsShown,
+          'caption-handles-hidden': !vm.areCaptionHandlesShown,
+        }"
         msd-wheel="vm.onWheel($event, $delta, $deltaX, $deltaY)"
         ng-mousedown="vm.onViewportMousedown($event)"
         ng-mousemove="vm.onViewportMousemove($event)"
@@ -118,10 +131,10 @@
               ng-attr-cx="{{edge.handle.x}}" ng-attr-cy="{{edge.handle.y}}"
               ng-mousedown="vm.onEdgeMousedown(edge, $event)">
           </circle>
-          <text ng-if="edge.label"
-              ng-attr-x="{{edge.handle.x + 1.75 * edge.thickness + 1}}"
+          <text ng-attr-x="{{edge.handle.x + 1.75 * edge.thickness + 1}}"
               ng-attr-y="{{edge.handle.y + 1.75 * edge.thickness + 1}}">
-            {{edge.label}}
+            <tspan class='element-label'>{{edge.label}}</tspan>
+            <tspan class='element-weight'>{{edge.weight}}</tspan>
           </text>
         </g>
         <!-- Vertices -->
@@ -133,10 +146,10 @@
               ng-mouseup="vm.onVertexMouseup(vertex, $event)">
             <title ng-if="vertex.label">{{vertex.label}}</title>
           </circle>
-          <text ng-if="vertex.label"
-              ng-attr-x="{{vertex.x + vertex.radius + 1}}"
+          <text ng-attr-x="{{vertex.x + vertex.radius + 1}}"
               ng-attr-y="{{vertex.y + vertex.radius + 1}}">
-            {{vertex.label}}
+            <tspan class='element-label'>{{vertex.label}}</tspan>
+            <tspan class='element-weight'>{{vertex.weight}}</tspan>
           </text>
         </g>
         <!-- Captions -->

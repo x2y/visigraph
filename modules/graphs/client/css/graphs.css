@@ -116,5 +116,17 @@
     .viewport .selection.shown {
       opacity: 1;
       transition: none; }
+  .viewport.vertex-labels-hidden .vertex .element-label {
+    display: none; }
+  .viewport.vertex-weights-hidden .vertex .element-weight {
+    display: none; }
+  .viewport.edge-handles-hidden .edge circle {
+    display: none; }
+  .viewport.edge-labels-hidden .edge .element-label {
+    display: none; }
+  .viewport.edge-weights-hidden .edge .element-weight {
+    display: none; }
+  .viewport.caption-handles-hidden .caption circle {
+    display: none; }
 
 /*# sourceMappingURL=graphs.css.map */

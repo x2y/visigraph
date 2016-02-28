@@ -27,6 +27,12 @@
     var isMouseDown = false;
 
     var vm = this;
+    vm.areVertexLabelsShown = true;
+    vm.areVertexWeightsShown = false;
+    vm.areEdgeHandlesShown = true;
+    vm.areEdgeLabelsShown = true;
+    vm.areEdgeWeightsShown = false;
+    vm.areCaptionHandlesShown = true;
     vm.urlPath = $state.href($state.current);  // See https://github.com/meanjs/mean/issues/1224
     vm.graph = graph;
     vm.transform = [[1, 0, 0],
@@ -88,20 +94,6 @@
           callback: onSaveShortcut
         });
 
-
-    function getMousePoint(e) {
-      // Unfortunately, we can't just use offsetX/offsetY from the event because, when hovering over
-      // a <text> element they are incorrectly (or at least unexpectedly) computed relative to the
-      // <text> node, rather than the SVG viewportEl. So instead we must use the jqLite-normalize
-      // pageX/pageY members relative to the viewportEl's computed equivalent page x/y values.
-      var boundingClientRect = viewportEl.getBoundingClientRect();
-      return {
-        x: e.pageX - boundingClientRect.left - document.body.scrollLeft -
-            document.documentElement.scrollLeft,
-        y: e.pageY - boundingClientRect.top - document.body.scrollTop -
-            document.documentElement.scrollTop,
-      };
-    }
 
     function onViewportMousedown(e) {
       if (e.which !== 1) {
@@ -491,6 +483,20 @@
       function errorCallback(res) {
         vm.error = res.data.message;
       }
+    }
+
+    function getMousePoint(e) {
+      // Unfortunately, we can't just use offsetX/offsetY from the event because, when hovering over
+      // a <text> element they are incorrectly (or at least unexpectedly) computed relative to the
+      // <text> node, rather than the SVG viewportEl. So instead we must use the jqLite-normalize
+      // pageX/pageY members relative to the viewportEl's computed equivalent page x/y values.
+      var boundingClientRect = viewportEl.getBoundingClientRect();
+      return {
+        x: e.pageX - boundingClientRect.left - document.body.scrollLeft -
+            document.documentElement.scrollLeft,
+        y: e.pageY - boundingClientRect.top - document.body.scrollTop -
+            document.documentElement.scrollTop,
+      };
     }
 
     function translate(matrix, x, y) {
