@@ -484,20 +484,23 @@
       return;
     }
     
-    // Center-finding math from http://goo.gl/TwvDa4.
-    var m = [
-      (this.from.y - this.handle.y) / (this.from.x - this.handle.x),
-      (this.to.y - this.handle.y) / (this.to.x - this.handle.x),
-    ];
+    // Calculate the center of the arc.
+    var x0 = this.from.x, y0 = this.from.y;
+    var x1 = this.handle.x, y1 = this.handle.y;
+    var x2 = this.to.x, y2 = this.to.y;
     var center = { x: 0, y: 0 };
-    center.x = (m[0] * m[1] * (this.to.y - this.from.y) +
-                m[0] * (this.handle.x + this.to.x) -
-                m[1] * (this.from.x + this.handle.x)) /
-               (2 * (m[0] - m[1]));
-    center.y = (-1 / m[0]) * (center.x - (this.from.x + this.handle.x) / 2) +
-               (this.from.y + this.handle.y) / 2;
+    var divisor = 2.0 * getDeterminant([[x0, y0, 1],
+                                        [x1, y1, 1],
+                                        [x2, y2, 1]]);
+    center.x = getDeterminant([[x0 * x0 + y0 * y0, y0, 1],
+                               [x1 * x1 + y1 * y1, y1, 1],
+                               [x2 * x2 + y2 * y2, y2, 1]]) / divisor;
+    center.y = getDeterminant([[x0, x0 * x0 + y0 * y0, 1],
+                               [x1, x1 * x1 + y1 * y1, 1],
+                               [x2, x2 * x2 + y2 * y2, 1]]) / divisor;
     this._radius = getDistance(this.handle, center);
     
+    // Calculate the other properties of the arc from the center.
     var fromAngle = getAngle(center, this.from);
     var handleAngle = getAngle(center, this.handle) - fromAngle ;
     var toAngle = getAngle(center, this.to) - fromAngle;
@@ -569,6 +572,34 @@
       id += chars[Math.floor(Math.random() * 64)];
     }
     return id;
+  }
+
+  function getDeterminant(matrix) {
+    if (matrix.length == 1) {
+      return matrix[0][0];
+    }
+    
+    if (matrix.length == 2) {
+      return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
+    }
+
+    var result = 0;
+    for (var i = 0; i < matrix[0].length; ++i) {
+      var tmp = [[0, 0], [0, 0]];
+      for (var j = 1; j < matrix.length; ++j) {
+        for (var k = 0; k < matrix[0].length; ++k) {
+          if (k < i) {
+            tmp[j - 1][k] = matrix[j][k];
+          } else if (k > i) {
+            tmp[j - 1][k - 1] = matrix[j][k];
+          }
+        }
+      }
+      
+      result += matrix[0][i] * ((i & 1) == 0 ? 1 : -1) * getDeterminant(tmp);
+    }
+    
+    return result;
   }
 
   function getDistance(from, to) {
