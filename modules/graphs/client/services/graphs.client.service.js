@@ -433,7 +433,7 @@
         var oldLength = getDistance(this._lastFrom, this._lastTo);
         var oldLineAngle = getAngle(this._lastFrom, this._lastTo);
         var oldMidpoint = getMidpoint(this._lastFrom, this._lastTo);
-        var oldHandleRadiusRatio = getDistance(oldMidpoint, this.handle) / oldLength;
+        var oldHandleRadiusRatio = getDistance(oldMidpoint, this.handle) / oldLength || 0;
         var oldHandleAngle = getAngle(oldMidpoint, this.handle) - oldLineAngle;
 
         var newLength = getDistance(this.from, this.to);
