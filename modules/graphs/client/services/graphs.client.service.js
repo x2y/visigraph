@@ -70,7 +70,6 @@
     Resource.prototype.hasSelectedCaptions = hasSelectedCaptions;
     Resource.prototype.getSelectedCaptions = getSelectedCaptions;
     Resource.prototype.translateElements = translateElements;
-    Resource.prototype.releaseElements = releaseElements;
 
     Resource.Vertex = Vertex;
     Resource.Edge = Edge;
@@ -330,7 +329,7 @@
 
       // Fix the edges altered by previous vertex translations.
       for (var id in edgesToUpdate) {
-        edgesToUpdate[id].update();
+        edgesToUpdate[id].update(opt_suspendRelease);
       }
 
       // Translate the specified captions.
@@ -338,21 +337,6 @@
         var caption = opt_captions[i];
         caption.x += x;
         caption.y += y;
-      }
-
-      if (!opt_suspendRelease) {
-        this.releaseElements(opt_edges);
-      }
-    }
-
-    function releaseElements(opt_edges) {
-      /* jshint validthis: true */
-      if (opt_edges == null) {
-        opt_edges = this.getSelectedEdges();
-      }
-
-      for (var i = 0; i < opt_edges.length; ++i) {
-        opt_edges[i].release();
       }
     }
   }
@@ -430,7 +414,7 @@
     this._recalculate();
   };
 
-  Edge.prototype.update = function () {
+  Edge.prototype.update = function (opt_suspendRelease) {
     var hasVertexTranslated = (this.from.x !== this._lastFrom.x) ||
                               (this.from.y !== this._lastFrom.y) ||
                               (this.to.x !== this._lastTo.x) ||
@@ -464,6 +448,9 @@
     }
 
     this._recalculate();
+    if (!opt_suspendRelease) {
+      this.release();
+    }
   };
 
   Edge.prototype.release = function () {

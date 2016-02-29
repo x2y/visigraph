@@ -153,7 +153,10 @@
       switch (vm.tool) {
         case Tool.CURSOR:
           if (!vm.isSelectionShown) {
-            vm.graph.releaseElements();
+            var selectedEdges = vm.graph.getSelectedEdges();
+            for (var i = 0; i < selectedEdges.length; ++i) {
+              selectedEdges[i].release();
+            }
             break;
           }
           /* falls through */
