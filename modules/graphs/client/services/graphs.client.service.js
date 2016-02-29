@@ -454,9 +454,13 @@
   };
 
   Edge.prototype.release = function () {
-    if (this.isLinear) {
-      this.handle = getMidpoint(this.from, this.to);
+    if (!this.isLinear) {
+      return;
     }
+    
+    this.handle = getMidpoint(this.from, this.to);
+    this._lastHandle.x = this.handle.x;
+    this._lastHandle.y = this.handle.y;
   };
 
   Edge.prototype._recalculate = function () {
