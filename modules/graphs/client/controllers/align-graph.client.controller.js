@@ -47,7 +47,7 @@
     function distribute(axis) {
       var vertices = getActionableVertices().sort((v0, v1) => v0[axis] - v1[axis]);
       if (vertices.length < 3) {
-        return
+        return;
       }
 
       var incidentEdges = {};
@@ -59,7 +59,7 @@
         for (var id in vertex.edges) {
           incidentEdges[id] = vertex.edges[id];
         }
-      };
+      }
       
       // Update the edges altered by previous vertex translations.
       for (var id in incidentEdges) {

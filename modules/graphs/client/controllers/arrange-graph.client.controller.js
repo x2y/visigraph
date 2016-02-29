@@ -29,8 +29,8 @@
       var centroid = getCentroid(vertices);
 
       // Sort the vertices by angle around the centroid.
-      vertices.sort(function (a, b) {
-        return a.getAngleFrom(centroid) - b.getAngleFrom(centroid);
+      vertices.sort((v0, v1) => {
+        return v0.getAngleFrom(centroid) - v1.getAngleFrom(centroid);
       });
 
       // Fix the edge-case where the last vertex is actually closer to the 0-angle than the first
@@ -91,20 +91,17 @@
       var cols = rows;  // For now we only support square grids.
 
       // Get the min/max Y values bounding the actionable vertices.
-      var minY = Infinity, maxY = -Infinity;
-      for (var i = 0; i < vertices.length; ++i) {
-        minY = Math.min(minY, vertices[i].y);
-        maxY = Math.max(maxY, vertices[i].y);
-      }
+      var minY = vertices.reduce((minY, v) => Math.min(minY, v.y), Infinity);
+      var maxY = vertices.reduce((maxY, v) => Math.max(maxY, v.y), -Infinity);
       var height = maxY - minY;
 
       // Sort the vertices before arrangement by row and x position to minimize vertex rearrangement
       // if the vertices are already in a gridlike configuration.
-      vertices.sort(function (a, b) {
+      vertices.sort((v0, v1) => {
         // We need the Math.min to prevent vertices at maxY from falling into an extra row "bucket".
-        var aRow = Math.min(rows - 1, Math.floor(rows * (a.y - minY) / height));
-        var bRow = Math.min(rows - 1, Math.floor(rows * (b.y - minY) / height));
-        return aRow - bRow || a.x - b.x;
+        var aRow = Math.min(rows - 1, Math.floor(rows * (v0.y - minY) / height));
+        var bRow = Math.min(rows - 1, Math.floor(rows * (v1.y - minY) / height));
+        return aRow - bRow || v0.x - v1.x;
       });
 
       // Rearrange them into a grid.
@@ -216,20 +213,24 @@
     function arrangeAsForces() {
       // TODO: Support vertex/edge weights.
       var hasSelectedVertices = graph.hasSelectedVertices();
-      var centroid = getCentroid(graph.vertices);
+      var vertices = [];
+      for (var id in graph.vertices) {
+        vertices.push(graph.vertices[id]);
+      }
+      var centroid = getCentroid(vertices);
 
       // Convert the vertices to D3-friendly "nodes".
       var vertexD3Nodes = {};
       var d3Nodes = [];
-      for (var id in graph.vertices) {
-        var vertex = graph.vertices[id];
+      for (var i = 0; i < vertices.length; ++i) {
+        var vertex = vertices[i];
         var node = {
           vertex: vertex,
           x: vertex.x - centroid.x,
           y: vertex.y - centroid.y,
           fixed: hasSelectedVertices && !vertex.isSelected,
         };
-        vertexD3Nodes[id] = node;
+        vertexD3Nodes[vertex.id] = node;
         d3Nodes.push(node);
       }
 
@@ -294,16 +295,10 @@
     }
 
     function getCentroid(vertices) {
-      var length = 0;
-      var centroid = { x: 0, y: 0 };
-      for (var id in vertices) {
-        centroid.x += vertices[id].x;
-        centroid.y += vertices[id].y;
-        ++length;
-      }
-      centroid.x /= length;
-      centroid.y /= length;
-      return centroid;
+      return {
+        x: vertices.reduce((sum, v) => v.x + sum, 0) / vertices.length,
+        y: vertices.reduce((sum, v) => v.y + sum, 0) / vertices.length,
+      };
     }
   }
 })();
