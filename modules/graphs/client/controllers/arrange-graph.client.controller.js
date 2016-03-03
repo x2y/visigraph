@@ -165,8 +165,8 @@
       d3Nodes = d3Tree.nodes(root);
 
       // Rearrange the vertices according to D3's results.
-      for (var i = 0; i < d3Nodes.length; ++i) {
-        applyFn(d3Nodes[i], rootX, rootY);
+      for (var d3Node of d3Nodes) {
+        applyFn(d3Node, rootX, rootY);
       }
 
       // Reset the edges altered by previous vertex translations.
@@ -222,8 +222,7 @@
       // Convert the vertices to D3-friendly "nodes".
       var vertexD3Nodes = {};
       var d3Nodes = [];
-      for (var i = 0; i < vertices.length; ++i) {
-        var vertex = vertices[i];
+      for (var vertex of vertices) {
         var node = {
           vertex: vertex,
           x: vertex.x - centroid.x,
@@ -265,14 +264,13 @@
 
       function onTick() {
         $scope.$apply(function () {
-          for (var i = 0; i < d3Nodes.length; ++i) {
-            var d3Node = d3Nodes[i];
+          for (var d3Node of d3Nodes) {
             d3Node.vertex.x = d3Node.x + centroid.x;
             d3Node.vertex.y = d3Node.y + centroid.y;
           }
 
-          for (var i = 0; i < d3Links.length; ++i) {
-            d3Links[i].edge.reset();
+          for (var d3Link of d3Links) {
+            d3Link.edge.reset();
           }
         });
       }

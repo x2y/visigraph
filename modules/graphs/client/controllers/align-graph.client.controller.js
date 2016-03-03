@@ -22,8 +22,7 @@
       var vertices = getActionableVertices();
       var median = getMedian(vertices);
       var incidentEdges = {};
-      for (var i = 0; i < vertices.length; ++i) {
-        var vertex = vertices[i];
+      for (var vertex of vertices) {
         vertex[axis] = median[axis];
         for (var id in vertex.edges) {
           incidentEdges[id] = vertex.edges[id];

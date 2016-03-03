@@ -31,8 +31,7 @@
       var vertices = getActionableVertices();
       var centroid = getCentroid(vertices);
       var incidentEdges = {};
-      for (var i = 0; i < vertices.length; ++i) {
-        var vertex = vertices[i];
+      for (var vertex of vertices) {
         vertex.x = centroid.x + factor * (vertex.x - centroid.x);
         vertex.y = centroid.y + factor * (vertex.y - centroid.y);
       

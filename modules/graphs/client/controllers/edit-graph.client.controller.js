@@ -153,9 +153,8 @@
       switch (vm.tool) {
         case Tool.CURSOR:
           if (!vm.isSelectionShown) {
-            var selectedEdges = vm.graph.getSelectedEdges();
-            for (var i = 0; i < selectedEdges.length; ++i) {
-              selectedEdges[i].release();
+            for (var selectedEdge of vm.graph.getSelectedEdges()) {
+              selectedEdge.release();
             }
             break;
           }
@@ -227,13 +226,12 @@
             y: svgPoint.y,
           });
 
-          var selectedVertices = vm.graph.getSelectedVertices();
-          for (var i = 0; i < selectedVertices.length; ++i) {
+          for (var selectedVertex of vm.graph.getSelectedVertices()) {
             vm.graph.addEdge({
-              from: selectedVertices[i],
+              from: selectedVertex,
               to: vertex,
             });
-            selectedVertices[i].isSelected = false;
+            selectedVertex.isSelected = false;
           }
           break;
         case Tool.CAPTION:
@@ -287,12 +285,12 @@
             vertex.isSelected = true;
             e.stopPropagation();
           } else if (vm.graph.allowLoops && vertex.isSelected) {
-            for (var i = 0; i < selectedVertices.length; ++i) {
+            for (var selectedVertex of selectedVertices) {
               vm.graph.addEdge({
-                from: selectedVertices[i],
+                from: selectedVertex,
                 to: vertex,
               });
-              selectedVertices[i].isSelected = false;
+              selectedVertex.isSelected = false;
             }
             e.stopPropagation();
           }
@@ -320,12 +318,12 @@
           if (selectedVertices.length === 1 && selectedVertices[0] === vertex) {
             // Do nothing.
           } else {
-            for (var i = 0; i < selectedVertices.length; ++i) {
+            for (var selectedVertex of selectedVertices) {
               vm.graph.addEdge({
-                from: selectedVertices[i],
+                from: selectedVertex,
                 to: vertex,
               });
-              selectedVertices[i].isSelected = false;
+              selectedVertex.isSelected = false;
             }
           }
           e.stopPropagation();

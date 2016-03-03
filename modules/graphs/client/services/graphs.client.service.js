@@ -145,11 +145,11 @@
 
     function transformResponseArray(resourceData, header) {
       var validResourceData = [];
-      for (var i = 0; i < resourceData.length; ++i) {
+      for (var resourceDatum of resourceData) {
         try {
-          validResourceData.push(transformResponse(resourceData[i], header));
+          validResourceData.push(transformResponse(resourceDatum, header));
         } catch (e) {
-          console.error('Unable to parse graph data:', resourceData[i], e);
+          console.error('Unable to parse graph data:', resourceDatum, e);
         }
       }
       return validResourceData;
@@ -310,8 +310,7 @@
 
       // Translate the specified vertices.
       var edgesToUpdate = {};
-      for (var i = 0; i < opt_vertices.length; ++i) {
-        var vertex = opt_vertices[i];
+      for (var vertex of opt_vertices) {
         vertex.x += x;
         vertex.y += y;
         for (var id in vertex.edges) {
@@ -320,8 +319,7 @@
       }
 
       // Translate the specified edges.
-      for (var i = 0; i < opt_edges.length; ++i) {
-        var edge = opt_edges[i];
+      for (var edge of opt_edges) {
         edge.handle.x += x;
         edge.handle.y += y;
         edgesToUpdate[edge.id] = edge;
@@ -333,8 +331,7 @@
       }
 
       // Translate the specified captions.
-      for (var i = 0; i < opt_captions.length; ++i) {
-        var caption = opt_captions[i];
+      for (var caption of opt_captions) {
         caption.x += x;
         caption.y += y;
       }

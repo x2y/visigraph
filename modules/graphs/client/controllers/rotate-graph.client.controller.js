@@ -23,8 +23,7 @@
       var edges = graph.getSelectedEdges();
       var centroid = getCentroid(vertices);
       var edgesToUpdate = {};
-      for (var i = 0; i < vertices.length; ++i) {
-        var vertex = vertices[i];
+      for (var vertex of vertices) {
         var oldX = vertex.x;
         vertex.x = centroid.x - direction * (vertex.y - centroid.y);
         vertex.y = centroid.y + direction * (oldX - centroid.x);
@@ -34,8 +33,7 @@
         }
       }
 
-      for (var i = 0; i < edges.length; ++i) {
-        var edge = edges[i];
+      for (var edge of edges) {
         var oldX = edge.handle.x;
         edge.handle.x = centroid.x - direction * (edge.handle.y - centroid.y);
         edge.handle.y = centroid.y + direction * (oldX - centroid.x);
@@ -62,8 +60,7 @@
       var edges = graph.getSelectedEdges();
       var centroid = getCentroid(vertices);
       var edgesToUpdate = {};
-      for (var i = 0; i < vertices.length; ++i) {
-        var vertex = vertices[i];
+      for (var vertex of vertices) {
         vertex[axis] = 2 * centroid[axis] - vertex[axis];
 
         for (var id in vertex.edges) {
@@ -71,10 +68,9 @@
         }
       }
 
-      for (var i = 0; i < edges.length; ++i) {
-        var edge = edges[i];
+      for (var edge of edges) {
         edge.handle[axis] = 2 * centroid[axis] - edge.handle[axis];
-
+        
         edgesToUpdate[edge.id] = edge;
       }
 
