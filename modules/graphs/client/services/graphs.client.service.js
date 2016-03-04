@@ -576,11 +576,11 @@
   }
 
   function getDeterminant(matrix) {
-    if (matrix.length == 1) {
+    if (matrix.length === 1) {
       return matrix[0][0];
     }
     
-    if (matrix.length == 2) {
+    if (matrix.length === 2) {
       return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
     }
 
@@ -597,7 +597,7 @@
         }
       }
       
-      result += matrix[0][i] * ((i & 1) == 0 ? 1 : -1) * getDeterminant(tmp);
+      result += matrix[0][i] * ((i & 1) === 0 ? 1 : -1) * getDeterminant(tmp);
     }
     
     return result;
