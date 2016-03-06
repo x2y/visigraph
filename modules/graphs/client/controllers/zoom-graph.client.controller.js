@@ -8,6 +8,9 @@
   ZoomGraphController.$inject = ['$scope', '$state'];
 
 
+  var SCALE_FACTOR = 1.25;
+
+
   function ZoomGraphController($scope, $state) {
     var graph = $scope.vm.graph;
 
@@ -23,15 +26,15 @@
     }
     
     function resetZoom() {
-      // TODO
+      $scope.vm.scaleViewportAroundCenter(1 / $scope.vm.transform[0][0]);
     }
     
     function zoomIn() {
-      // TODO
+      $scope.vm.scaleViewportAroundCenter(SCALE_FACTOR);
     }
     
     function zoomOut() {
-      // TODO
+      $scope.vm.scaleViewportAroundCenter(1 / SCALE_FACTOR);
     }
   }
 })();

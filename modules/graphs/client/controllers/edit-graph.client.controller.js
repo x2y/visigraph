@@ -9,7 +9,7 @@
 
 
   var PAN_SPEED_FACTOR = 0.15;
-  var WHEEL_SCALE_FACTOR = 0.2;
+  var WHEEL_SCALE_FACTOR = 1.25;
 
   var Tool = {
     CURSOR: 'cursor',
@@ -55,6 +55,7 @@
     vm.onCaptionMousedown = onCaptionMousedown;
     vm.onWheel = onWheel;
     vm.onSave = onSave;
+    vm.scaleViewportAroundCenter = scaleViewportAroundCenter;
 
     EditGraphController.Tool = Tool;
 
@@ -149,7 +150,7 @@
 
       isMouseDown = false;
       var mousePoint = getMousePoint(e);
-      var svgPoint = invertPoint(vm.transform, mousePoint.x, mousePoint.y);
+      var svgPoint = invertPoint(mousePoint.x, mousePoint.y);
       switch (vm.tool) {
         case Tool.CURSOR:
           if (!vm.isSelectionShown) {
@@ -164,7 +165,7 @@
           if (!vm.isSelectionShown) {
             break;
           }
-          var svgSelectionStartPoint = invertPoint(vm.transform, vm.selectionStartPoint.x,
+          var svgSelectionStartPoint = invertPoint(vm.selectionStartPoint.x,
                                                    vm.selectionStartPoint.y);
           var svgSelectionEndPoint = svgPoint;
 
@@ -246,12 +247,12 @@
 
     function onViewportDblClick(e) {
       var mousePoint = getMousePoint(e);
-      panEndPoint = invertPoint(vm.transform, mousePoint.x, mousePoint.y);
+      panEndPoint = invertPoint(mousePoint.x, mousePoint.y);
       
       $interval.cancel(panInterval);
       panInterval = $interval(function () {
-        var panStartPoint = invertPoint(vm.transform, viewportEl.offsetWidth / 2,
-            viewportEl.offsetHeight / 2);
+        var panStartPoint = invertPoint(viewportEl.offsetWidth / 2,
+                                        viewportEl.offsetHeight / 2);
         var scale = vm.transform[0][0];
         var xDelta = (panEndPoint.x - panStartPoint.x) * PAN_SPEED_FACTOR;
         var yDelta = (panEndPoint.y - panStartPoint.y) * PAN_SPEED_FACTOR;
@@ -259,7 +260,7 @@
         if (Math.abs(xDelta) < 0.1 && Math.abs(yDelta) < 0.1) {
           $interval.cancel(panInterval);
         } else {
-          translate(vm.transform, -xDelta * scale, -yDelta * scale);
+          translateViewport(-xDelta * scale, -yDelta * scale);
         }
       }, 30);
     }
@@ -385,9 +386,7 @@
 
     function onWheel(e, delta, deltaX, deltaY) {
       var mousePoint = getMousePoint(e.originalEvent);
-      translate(vm.transform, -mousePoint.x, -mousePoint.y);
-      scale(vm.transform, delta * WHEEL_SCALE_FACTOR + 1);
-      translate(vm.transform, mousePoint.x, mousePoint.y);
+      scaleViewport(mousePoint, Math.pow(WHEEL_SCALE_FACTOR, delta));
       e.preventDefault();
     }
 
@@ -452,16 +451,16 @@
       }
       switch (e.code) {
         case 'ArrowUp':
-          translate(vm.transform, 0, increment);
+          translateViewport(0, increment);
           break;
         case 'ArrowRight':
-          translate(vm.transform, -increment, 0);
+          translateViewport(-increment, 0);
           break;
         case 'ArrowDown':
-          translate(vm.transform, 0, -increment);
+          translateViewport(0, -increment);
           break;
         case 'ArrowLeft':
-          translate(vm.transform, increment, 0);
+          translateViewport(increment, 0);
           break;
       }
       e.preventDefault();
@@ -500,23 +499,32 @@
       };
     }
 
-    function translate(matrix, x, y) {
-      matrix[0][2] += x;
-      matrix[1][2] += y;
-    }
-
-    function scale(matrix, factor) {
-      matrix[0][0] *= factor;
-      matrix[0][2] *= factor;
-      matrix[1][1] *= factor;
-      matrix[1][2] *= factor;
-    }
-
-    function invertPoint(matrix, x, y) {
+    function invertPoint(x, y) {
       return {
-        x: (x - matrix[0][2]) / matrix[0][0],
-        y: (y - matrix[1][2]) / matrix[1][1],
+        x: (x - vm.transform[0][2]) / vm.transform[0][0],
+        y: (y - vm.transform[1][2]) / vm.transform[1][1],
       };
+    }
+
+    function translateViewport(x, y) {
+      vm.transform[0][2] += x;
+      vm.transform[1][2] += y;
+    }
+
+    function scaleViewport(center, factor) {
+      translateViewport(-center.x, -center.y);
+      vm.transform[0][0] *= factor;
+      vm.transform[0][2] *= factor;
+      vm.transform[1][1] *= factor;
+      vm.transform[1][2] *= factor;
+      translateViewport(center.x, center.y);
+    }
+
+    function scaleViewportAroundCenter(factor) {
+      scaleViewport({
+        x: viewportEl.offsetWidth / 2,
+        y: viewportEl.offsetHeight / 2,
+      }, factor);
     }
 
     function isPointInRect(x, y, rectStartPoint, rectEndPoint) {
