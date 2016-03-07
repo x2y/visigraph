@@ -10,6 +10,7 @@
 
   var PAN_SPEED_FACTOR = 0.15;
   var WHEEL_SCALE_FACTOR = 1.25;
+  var GRAPH_MARGIN_FACTOR = 1.3;
 
   var Tool = {
     CURSOR: 'cursor',
@@ -56,9 +57,12 @@
     vm.onWheel = onWheel;
     vm.onSave = onSave;
     vm.scaleViewportAroundCenter = scaleViewportAroundCenter;
+    vm.fitViewportToGraph = fitViewportToGraph;
+    vm.getActionableVertices = getActionableVertices;
 
     EditGraphController.Tool = Tool;
 
+    fitViewportToGraph();
     hotkeys.bindTo($scope)
         .add({
           combo: 'ctrl+a',
@@ -506,6 +510,12 @@
       };
     }
 
+    function resetViewport() {
+      vm.transform = [[1, 0, 0],
+                      [0, 1, 0],
+                      [0, 0, 1]];
+    }
+
     function translateViewport(x, y) {
       vm.transform[0][2] += x;
       vm.transform[1][2] += y;
@@ -525,6 +535,36 @@
         x: viewportEl.offsetWidth / 2,
         y: viewportEl.offsetHeight / 2,
       }, factor);
+    }
+
+    function fitViewportToGraph() {
+      var minX = Infinity, maxX = -Infinity;
+      var minY = Infinity, maxY = -Infinity;
+      var vertices = getActionableVertices();
+      for (var vertex of vertices) {
+        minX = Math.min(minX, vertex.x - vertex.radius);
+        maxX = Math.max(maxX, vertex.x + vertex.radius);
+        minY = Math.min(minY, vertex.y - vertex.radius);
+        maxY = Math.max(maxY, vertex.y + vertex.radius);
+      }
+      var maxDimensionRatio = GRAPH_MARGIN_FACTOR *
+          Math.max((maxX - minX) / viewportEl.offsetWidth,
+                   (maxY - minY) / viewportEl.offsetHeight);
+
+      resetViewport();
+      translateViewport(-(maxX + minX) / 2, -(maxY + minY) / 2);
+      translateViewport(viewportEl.offsetWidth / 2, viewportEl.offsetHeight / 2);
+      scaleViewportAroundCenter(1 / maxDimensionRatio);
+    }
+
+    function getActionableVertices() {
+      var vertices = vm.graph.getSelectedVertices();
+      if (!vertices.length) {
+        for (var id in vm.graph.vertices) {
+          vertices.push(vm.graph.vertices[id]);
+        }
+      }
+      return vertices;
     }
 
     function isPointInRect(x, y, rectStartPoint, rectEndPoint) {

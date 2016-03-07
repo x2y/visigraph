@@ -25,7 +25,7 @@
 
 
     function arrangeAsCircle() {
-      var vertices = getActionableVertices();
+      var vertices = $scope.vm.getActionableVertices();
       var centroid = getCentroid(vertices);
 
       // Sort the vertices by angle around the centroid.
@@ -85,7 +85,7 @@
       // part will be determining the ideal grid dimensions from the existing vertex coordinates. We
       // could assume a square grid, or try multiple different dimensions for the grid and chose the
       // one with minimal cost, but neither approach is ideal.
-      var vertices = getActionableVertices();
+      var vertices = $scope.vm.getActionableVertices();
       var centroid = getCentroid(vertices);
       var rows = Math.ceil(Math.sqrt(vertices.length));
       var cols = rows;  // For now we only support square grids.
@@ -280,16 +280,6 @@
           vm.isArranging = false;
         });
       }
-    }
-
-    function getActionableVertices() {
-      var vertices = graph.getSelectedVertices();
-      if (!vertices.length) {
-        for (var id in graph.vertices) {
-          vertices.push(graph.vertices[id]);
-        }
-      }
-      return vertices;
     }
 
     function getCentroid(vertices) {

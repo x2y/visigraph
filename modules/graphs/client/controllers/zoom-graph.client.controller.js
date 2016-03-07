@@ -22,7 +22,7 @@
 
 
     function fitGraph() {
-      // TODO
+      $scope.vm.fitViewportToGraph();
     }
     
     function resetZoom() {

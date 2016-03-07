@@ -28,7 +28,7 @@
     }
     
     function scale(factor) {
-      var vertices = getActionableVertices();
+      var vertices = $scope.vm.getActionableVertices();
       var centroid = getCentroid(vertices);
       var incidentEdges = {};
       for (var vertex of vertices) {
@@ -44,16 +44,6 @@
       for (var id in incidentEdges) {
         incidentEdges[id].update();
       }
-    }
-
-    function getActionableVertices() {
-      var vertices = graph.getSelectedVertices();
-      if (!vertices.length) {
-        for (var id in graph.vertices) {
-          vertices.push(graph.vertices[id]);
-        }
-      }
-      return vertices;
     }
 
     function getCentroid(vertices) {

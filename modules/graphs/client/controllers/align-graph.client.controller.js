@@ -19,7 +19,7 @@
 
 
     function align(axis) {
-      var vertices = getActionableVertices();
+      var vertices = $scope.vm.getActionableVertices();
       var median = getMedian(vertices);
       var incidentEdges = {};
       for (var vertex of vertices) {
@@ -44,7 +44,7 @@
     }
     
     function distribute(axis) {
-      var vertices = getActionableVertices().sort((v0, v1) => v0[axis] - v1[axis]);
+      var vertices = $scope.vm.getActionableVertices().sort((v0, v1) => v0[axis] - v1[axis]);
       if (vertices.length < 3) {
         return;
       }
@@ -72,16 +72,6 @@
 
     function distributeVertically() {
       distribute('y');
-    }
-
-    function getActionableVertices() {
-      var vertices = graph.getSelectedVertices();
-      if (!vertices.length) {
-        for (var id in graph.vertices) {
-          vertices.push(graph.vertices[id]);
-        }
-      }
-      return vertices;
     }
 
     function getMedian(vertices) {

@@ -19,7 +19,7 @@
 
 
     function rotate(direction) {
-      var vertices = getActionableVertices();
+      var vertices = $scope.vm.getActionableVertices();
       var edges = graph.getSelectedEdges();
       var centroid = getCentroid(vertices);
       var edgesToUpdate = {};
@@ -56,7 +56,7 @@
     }
     
     function flip(axis) {
-      var vertices = getActionableVertices();
+      var vertices = $scope.vm.getActionableVertices();
       var edges = graph.getSelectedEdges();
       var centroid = getCentroid(vertices);
       var edgesToUpdate = {};
@@ -86,16 +86,6 @@
     
     function flipVertically() {
       flip('y');
-    }
-
-    function getActionableVertices() {
-      var vertices = graph.getSelectedVertices();
-      if (!vertices.length) {
-        for (var id in graph.vertices) {
-          vertices.push(graph.vertices[id]);
-        }
-      }
-      return vertices;
     }
 
     function getCentroid(vertices) {
