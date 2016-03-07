@@ -11,6 +11,7 @@
   var PAN_SPEED_FACTOR = 0.15;
   var WHEEL_SCALE_FACTOR = 1.25;
   var GRAPH_MARGIN_FACTOR = 1.3;
+  var MIN_GRAPH_WIDTH = 200;
 
   var Tool = {
     CURSOR: 'cursor',
@@ -548,8 +549,8 @@
         maxY = Math.max(maxY, vertex.y + vertex.radius);
       }
       var maxDimensionRatio = GRAPH_MARGIN_FACTOR *
-          Math.max((maxX - minX) / viewportEl.offsetWidth,
-                   (maxY - minY) / viewportEl.offsetHeight);
+          Math.max(Math.max(MIN_GRAPH_WIDTH, maxX - minX) / viewportEl.offsetWidth,
+                   Math.max(MIN_GRAPH_WIDTH, maxY - minY) / viewportEl.offsetHeight);
 
       resetViewport();
       translateViewport(-(maxX + minX) / 2, -(maxY + minY) / 2);
